@@ -40,7 +40,6 @@ namespace API.Mailer.BLL
             consumer.ReceivedAsync += Consumer_HandleBasicDeliver;
 
             await _channel.BasicConsumeAsync(_settings.QueueName, autoAck: false, consumer);
-
         }
 
         private async Task Consumer_HandleBasicDeliver(object sender, BasicDeliverEventArgs ea)
