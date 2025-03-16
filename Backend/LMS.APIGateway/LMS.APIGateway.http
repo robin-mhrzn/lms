@@ -1,0 +1,6 @@
+@LMS.APIGateway_HostAddress = http://localhost:5018
+
+GET {{LMS.APIGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

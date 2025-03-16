@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "LMS.APIGateway.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\API.User\\API.User.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

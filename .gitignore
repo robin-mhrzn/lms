@@ -1,0 +1,7 @@
+Backend/API.User/bin/
+Backend/API.User/obj/
+Backend/LMS.APIGateway/obj/
+Backend/SharedLib/obj/
+Backend/SharedLib/bin/
+Backend/LMS.APIGateway/bin/
+Backend/LMS.APIGateway/.vs/
