@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SharedLib.Filters;
+using SharedLib.Model.AppSettings;
+using SharedLib.Services;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration; // Define configuration
@@ -23,7 +25,8 @@ builder.Services.AddDbContext<UserContext>(options =>
 // Add Services
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddScoped<JwtHelper>();
-
+builder.Services.AddScoped<RabbitMQPublisher>();
+builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQSettings"));
 builder.Services.Configure<OTPConfigSetting>(builder.Configuration.GetSection("OTPConfig"));
 builder.Services.Configure<JwtConfigSetting>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddControllers(options =>

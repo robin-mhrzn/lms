@@ -6,6 +6,7 @@ using API.User.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SharedLib;
+using SharedLib.Model.AppSettings;
 using SharedLib.Services;
 
 namespace API.User.BLL.Service
@@ -15,11 +16,13 @@ namespace API.User.BLL.Service
         private readonly UserContext _context;
         private readonly JwtHelper _jwtHelper;
         private readonly OTPConfigSetting _otpConfigSetting;
-        public UserService(UserContext context, JwtHelper jwtHelper, IOptions<OTPConfigSetting> otpSettings)
+        private readonly RabbitMQSettings _rabbitMQSettings;
+        public UserService(UserContext context, JwtHelper jwtHelper, IOptions<OTPConfigSetting> otpSettings,IOptions<RabbitMQSettings> rabbitMQSettings)
         {
             _context = context;
             _jwtHelper = jwtHelper;
             _otpConfigSetting = otpSettings.Value;
+            _rabbitMQSettings = rabbitMQSettings.Value;
         }
         public async Task<ResponseModel> GenerateEmailOTP(string emailAddress)
         {
@@ -43,6 +46,12 @@ namespace API.User.BLL.Service
                 _context.PotentialUsers.Add(potentialUser);
             }
             await _context.SaveChangesAsync();
+            RabbitMQPublisher.SendEmailRequest(_rabbitMQSettings,new SharedLib.Model.EmailRequestModel
+            {
+                Body = $"Your OTP is {potentialUser.Otp}",
+                Subject="OTP",
+                To=emailAddress
+            });
             return new ResponseModel(true, "OTP has been sent to your email address");
         }
         public async Task<ResponseModel> ValidateOTP(string otp, string emailAddress)

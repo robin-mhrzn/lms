@@ -5,3 +5,5 @@ Backend/SharedLib/obj/
 Backend/SharedLib/bin/
 Backend/LMS.APIGateway/bin/
 Backend/LMS.APIGateway/.vs/
+Backend/API.Mailer/obj/
+Backend/API.Mailer/bin/

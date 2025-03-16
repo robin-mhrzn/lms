@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.User", "..\API.User\API
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLib", "..\SharedLib\SharedLib.csproj", "{737D974C-4884-4FA2-8A43-76A25DF57A79}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mail", "Mail", "{1AB82D3E-F041-452D-8DCA-9B390062CEC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.Mailer", "..\API.Mailer\API.Mailer.csproj", "{37BCAC07-1974-4E3E-8FB8-5ED20D95E59B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,11 +33,16 @@ Global
 		{737D974C-4884-4FA2-8A43-76A25DF57A79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{737D974C-4884-4FA2-8A43-76A25DF57A79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{737D974C-4884-4FA2-8A43-76A25DF57A79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37BCAC07-1974-4E3E-8FB8-5ED20D95E59B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37BCAC07-1974-4E3E-8FB8-5ED20D95E59B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37BCAC07-1974-4E3E-8FB8-5ED20D95E59B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37BCAC07-1974-4E3E-8FB8-5ED20D95E59B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B9C8A237-3441-4CDF-B9BF-E8138D20154B} = {E67A244B-3885-45D7-A1A0-96DAD697B584}
+		{37BCAC07-1974-4E3E-8FB8-5ED20D95E59B} = {1AB82D3E-F041-452D-8DCA-9B390062CEC2}
 	EndGlobalSection
 EndGlobal
