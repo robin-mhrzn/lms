@@ -8,8 +8,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 //builder.Services.AddControllers();
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
 
 builder.Services.AddOcelot();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -31,5 +42,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseCors("AllowAll");
 await app.UseOcelot();
 app.Run();

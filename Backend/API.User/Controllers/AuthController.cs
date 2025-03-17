@@ -6,7 +6,7 @@ using SharedLib;
 
 namespace API.User.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class AuthController : Controller
     {
         private readonly IUserService _userService;

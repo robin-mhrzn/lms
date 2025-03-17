@@ -9,7 +9,7 @@
           "Port": 7279
         }
       ],
-      "UpstreamPathTemplate": "/api/user/{everything}",
+      "UpstreamPathTemplate": "/api/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST" ]
     }
   ],

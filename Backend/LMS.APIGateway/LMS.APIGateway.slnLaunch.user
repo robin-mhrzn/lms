@@ -9,10 +9,6 @@
       {
         "Path": "..\\API.User\\API.User.csproj",
         "Action": "Start"
-      },
-      {
-        "Path": "..\\API.Mailer\\API.Mailer.csproj",
-        "Action": "Start"
       }
     ]
   }

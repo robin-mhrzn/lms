@@ -108,22 +108,21 @@ namespace API.User.BLL.Service
 
         public async Task<ResponseModel> Login(LoginModel model)
         {
-            var user = await _context.Users.Include(i => i.Role).FirstOrDefaultAsync(a => a.Email == model.Email);
-            if (user == null)
-            {
-                return new ResponseModel(false, "Invalid email or password");
-            }
-            else if (!user.IsActive)
-            {
-                return new ResponseModel(false, "User not active. Please contact admin");
-            }
-            else if (!PasswordHelper.VerifyPassword(model.Password, user.Password))
-            {
-                return new ResponseModel(false, "Invalid email or password");
-            }
-            var token = _jwtHelper.GenerateToken(user.UserId, user.Email, user.Role.Name);
-            return new ResponseModel(true, "You are logged in successfully", new { name = user.Name, email = user.Email, token = token });
-        }
+            var user = await _context.Users
+                .Include(i => i.Role)
+                .FirstOrDefaultAsync(a => a.Email == model.Email);
 
+            if (user == null || !PasswordHelper.VerifyPassword(model.Password, user.Password))
+                return new ResponseModel(false, "Invalid email or password");
+            if (!user.IsActive)
+                return new ResponseModel(false, "User not active. Please contact admin");
+            if (user.Role.Name == EnumCollection.Role.Admin.ToString() && !model.IsAdminType)
+                return new ResponseModel(false, "Invalid email or password");
+            else if (user.Role.Name == EnumCollection.Role.User.ToString() && model.IsAdminType)
+                return new ResponseModel(false, "Invalid email or password");
+            var token = _jwtHelper.GenerateToken(user.UserId, user.Email, user.Role.Name);
+            return new ResponseModel(true, "You are logged in successfully",
+                new { name = user.Name, email = user.Email, token });
+        }
     }
 }
