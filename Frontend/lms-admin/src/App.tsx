@@ -10,6 +10,7 @@ const Unauthorized = lazy(() => import("./pages/extra/UnAuthorized"));
 const NotFound = lazy(() => import("./pages/extra/NotFound"));
 const Dashboard = lazy(() => import("./pages/dashboard/dashboard"));
 const ProtectedRoute = lazy(() => import("./components/protected.Component"));
+const ChangePassword = lazy(() => import("./pages/user/changePassword"));
 const PublicLayout = lazy(
   () => import("./components/layouts/publicLayout/public.Layout")
 );
@@ -31,6 +32,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="change-password"
+            element={
+              <ProtectedRoute>
+                <ChangePassword />
               </ProtectedRoute>
             }
           />

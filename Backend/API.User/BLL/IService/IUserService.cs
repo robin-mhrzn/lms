@@ -9,6 +9,6 @@ namespace API.User.BLL.IService
         Task<ResponseModel> ValidateOTP(string otp, string emailAddress);
         Task<ResponseModel> Login(LoginModel model);
         Task<ResponseModel> GenerateEmailOTP(string emailAddress);
-
+        Task<ResponseModel> ChangePassword(int userId, ChangePasswordModel model);
     }
 }

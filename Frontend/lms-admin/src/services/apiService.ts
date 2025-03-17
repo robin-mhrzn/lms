@@ -2,7 +2,11 @@ import axios from "axios";
 import { logout } from "../redux/reducer/authReducer";
 import { showMessage } from "../utils/commonUtil";
 import { AuthHelper } from "../utils/authHelper";
-
+export interface ResponseModel {
+  success: boolean;
+  message: string;
+  data: any;
+}
 interface Params {
   baseUrl: any;
   headers: any;
@@ -14,6 +18,7 @@ interface ServiceTS {
   data?: any;
   method?: string;
 }
+
 export class APIService {
   private authToken: string;
   private config: Params;

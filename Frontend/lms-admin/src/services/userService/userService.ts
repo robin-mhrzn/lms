@@ -1,10 +1,16 @@
 import { login } from "../../redux/reducer/authReducer";
-import { APIService } from "../apiService";
+import { showMessage } from "../../utils/commonUtil";
+import { APIService, ResponseModel } from "../apiService";
 
 export interface ILoginModel {
   email: string;
   password: string;
   isAdminType: boolean;
+}
+export interface IChangePasswordModel {
+  oldPassword: string;
+  password: string;
+  confirmPassword: string;
 }
 export class UserService {
   private apiService: APIService;
@@ -40,5 +46,25 @@ export class UserService {
           }
         });
     };
+  };
+  changePassword = ({
+    data,
+    successCallback,
+  }: {
+    data: IChangePasswordModel;
+    successCallback: (res: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "user/changePassword",
+        data: data,
+        method: "post",
+      })
+      .then((res?: any) => {
+        if (res.data.success == true) {
+          showMessage(true, "Password changed successfully");
+        }
+        successCallback(res.data as ResponseModel);
+      });
   };
 }

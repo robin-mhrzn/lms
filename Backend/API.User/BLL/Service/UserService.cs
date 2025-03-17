@@ -124,5 +124,22 @@ namespace API.User.BLL.Service
             return new ResponseModel(true, "You are logged in successfully",
                 new { name = user.Name, email = user.Email, token });
         }
+
+        public async Task<ResponseModel> ChangePassword(int userId, ChangePasswordModel model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(a => a.UserId == userId);
+            if (user == null)
+            {
+                return new ResponseModel(false, "User not found");
+            }
+            if (!PasswordHelper.VerifyPassword(model.OldPassword, user.Password))
+            {
+                return new ResponseModel(false, "Old password is not correct");
+            }
+            user.Password = PasswordHelper.HashPassword(model.Password);
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return new ResponseModel(true, "Password has been changed successfully");
+        }
     }
 }
