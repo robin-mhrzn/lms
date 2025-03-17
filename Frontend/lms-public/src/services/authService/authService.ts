@@ -69,7 +69,7 @@ export class AuthService {
     callback: (res: any) => void;
   }) => {
     const response = await this.apiService.callApi({
-      url: "user/login/",
+      url: "auth/login/",
       method: "POST",
       data: data,
     });

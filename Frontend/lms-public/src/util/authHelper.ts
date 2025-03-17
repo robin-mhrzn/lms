@@ -41,7 +41,7 @@ export class AuthHelper {
       }
 
       try {
-        return JSON.parse(userToken) as AuthUserModel;
+        return JSON.parse(userToken.toString()) as AuthUserModel;
       } catch (error) {
         return new AuthUserModel();
       }
