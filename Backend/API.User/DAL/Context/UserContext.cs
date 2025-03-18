@@ -54,6 +54,8 @@ public partial class UserContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
+            entity.HasIndex(e => e.Email, "IX_Users").IsUnique();
+
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.Email)
                 .HasMaxLength(200)
@@ -76,6 +78,9 @@ public partial class UserContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.RefreshToken)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.ResetCode)
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.TwoFasecret)

@@ -25,6 +25,7 @@ builder.Services.AddDbContext<UserContext>(options =>
 // Add Services
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddScoped<JwtHelper>();
+builder.Services.AddScoped<EmailTemplateService>();
 builder.Services.AddScoped<RabbitMQPublisher>();
 builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQSettings"));
 builder.Services.Configure<OTPConfigSetting>(builder.Configuration.GetSection("OTPConfig"));

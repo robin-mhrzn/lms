@@ -17,9 +17,7 @@ const PublicLayout = () => {
           </Card>
         </div>
         <Footer className="bg-gray-900 text-white text-center py-4 mt-auto">
-          <p>
-            &copy; {new Date().getFullYear()} Your Company. All rights reserved.
-          </p>
+          <p>&copy; {new Date().getFullYear()}. All rights reserved.</p>
         </Footer>
       </div>
     </>

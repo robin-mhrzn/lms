@@ -12,6 +12,12 @@ export interface IChangePasswordModel {
   password: string;
   confirmPassword: string;
 }
+
+export interface IResetPasswordModel {
+  email: string;
+  otp: string;
+  password: string;
+}
 export class UserService {
   private apiService: APIService;
   constructor() {
@@ -65,6 +71,64 @@ export class UserService {
           showMessage(true, "Password changed successfully");
         }
         successCallback(res.data as ResponseModel);
+      });
+  };
+  sendResetOTP = ({
+    data,
+    callback,
+  }: {
+    data: IResetPasswordModel;
+    callback: (res: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "auth/GenerateResetCode",
+        data: data,
+        method: "post",
+      })
+      .then((res?: any) => {
+        callback(res.data as ResponseModel);
+      });
+  };
+  verifyResetPwdOTP = ({
+    data,
+    callback,
+  }: {
+    data: IResetPasswordModel;
+    callback: (res: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "auth/ValidResetCode",
+        data: data,
+        method: "post",
+      })
+      .then((res?: any) => {
+        callback(res.data as ResponseModel);
+      });
+  };
+  resetPassword = ({
+    data,
+    callback,
+  }: {
+    data: IResetPasswordModel;
+    callback: (res: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "auth/ResetPassword",
+        data: data,
+        method: "post",
+      })
+      .then((res?: any) => {
+        let responseData = res.data as ResponseModel;
+        if (responseData.success) {
+          showMessage(
+            true,
+            "Password reset successfully. You will be redirect to login page"
+          );
+        }
+        callback(responseData);
       });
   };
 }

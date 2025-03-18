@@ -10,5 +10,8 @@ namespace API.User.BLL.IService
         Task<ResponseModel> Login(LoginModel model);
         Task<ResponseModel> GenerateEmailOTP(string emailAddress);
         Task<ResponseModel> ChangePassword(int userId, ChangePasswordModel model);
+        Task<ResponseModel> GenerateForgotPwdCode(string emailAddress);
+        Task<ResponseModel> ResetPassword(ResetPasswordModel model);
+        Task<ResponseModel> VerifyResetCode(OTPModel model);
     }
 }

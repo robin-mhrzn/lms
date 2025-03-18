@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using SharedLib;
 using SharedLib.Model.AppSettings;
 using SharedLib.Services;
+using System.Net.Mail;
 
 namespace API.User.BLL.Service
 {
@@ -16,13 +17,20 @@ namespace API.User.BLL.Service
         private readonly UserContext _context;
         private readonly JwtHelper _jwtHelper;
         private readonly OTPConfigSetting _otpConfigSetting;
-        private readonly RabbitMQSettings _rabbitMQSettings;
-        public UserService(UserContext context, JwtHelper jwtHelper, IOptions<OTPConfigSetting> otpSettings,IOptions<RabbitMQSettings> rabbitMQSettings)
+        private readonly EmailTemplateService _emailTemplateService;
+        private readonly IWebHostEnvironment _env;
+
+        private string GetEmailTemplatePath()
+        {
+            return Path.Combine(_env.ContentRootPath, "EmailTemplates");
+        }
+        public UserService(UserContext context, JwtHelper jwtHelper, IOptions<OTPConfigSetting> otpSettings, EmailTemplateService emailTemplateService, IWebHostEnvironment env)
         {
             _context = context;
             _jwtHelper = jwtHelper;
             _otpConfigSetting = otpSettings.Value;
-            _rabbitMQSettings = rabbitMQSettings.Value;
+            _emailTemplateService = emailTemplateService;
+            _env = env;
         }
         public async Task<ResponseModel> GenerateEmailOTP(string emailAddress)
         {
@@ -46,12 +54,13 @@ namespace API.User.BLL.Service
                 _context.PotentialUsers.Add(potentialUser);
             }
             await _context.SaveChangesAsync();
-            RabbitMQPublisher.SendEmailRequest(_rabbitMQSettings,new SharedLib.Model.EmailRequestModel
+            var userDictionary = new Dictionary<string, string>
             {
-                Body = $"Your OTP is {potentialUser.Otp}",
-                Subject="OTP",
-                To=emailAddress
-            });
+                {"{email}",emailAddress },
+                {"otp",potentialUser.Otp }
+            };
+            await _emailTemplateService.SendEmail("Verify your email", GetEmailTemplatePath() + "/OTPGeneration.html", emailAddress, userDictionary);
+
             return new ResponseModel(true, "OTP has been sent to your email address");
         }
         public async Task<ResponseModel> ValidateOTP(string otp, string emailAddress)
@@ -96,7 +105,7 @@ namespace API.User.BLL.Service
                 };
                 _context.Users.Add(user);
 
-                var potentialUser =  _context.PotentialUsers.FirstOrDefault(a => a.Email == model.Email);
+                var potentialUser = _context.PotentialUsers.FirstOrDefault(a => a.Email == model.Email);
                 if (potentialUser != null)
                 {
                     _context.PotentialUsers.Remove(potentialUser);
@@ -140,6 +149,64 @@ namespace API.User.BLL.Service
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return new ResponseModel(true, "Password has been changed successfully");
+        }
+
+        public async Task<ResponseModel> GenerateForgotPwdCode(string emailAddress)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(a => a.Email == emailAddress && a.IsActive == true);
+            if (user == null)
+            {
+                return new ResponseModel(false, "Invalid email Adress. Please check it");
+            }
+            user.ResetCode = new OTPGenerator().GenerateOTP();
+            user.UpdatedDate = DateTime.UtcNow;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            var userDictionary = new Dictionary<string, string>
+            {
+                {"{name}",user.Name },
+                {"{email}",user.Email},
+                {"{resetCode}",user.ResetCode }
+            };
+            await _emailTemplateService.SendEmail("Reset Password Code", GetEmailTemplatePath() + "/ResetPassword.html", emailAddress, userDictionary);
+            return new ResponseModel(true, "Reset code has been sent to your email address. Please check your email");
+        }
+        public async Task<ResponseModel> VerifyResetCode(OTPModel model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(a => a.Email == model.Email);
+            if (user == null)
+            {
+                return new ResponseModel(false, "Invalid email address. Please check it");
+            }
+            if (user.ResetCode != model.OTP)
+            {
+                return new ResponseModel(false, "OTP code is not valid. Please check it");
+            }
+            return new ResponseModel(true, "OTP is valid");
+        }
+        public async Task<ResponseModel> ResetPassword(ResetPasswordModel model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(a => a.Email == model.Email);
+            if (user == null)
+            {
+                return new ResponseModel(false, "Invalid email address. Please check it");
+            }
+            if (user.ResetCode != model.OTP)
+            {
+                return new ResponseModel(false, "Invalid code. Please check your email and try again");
+            }
+            user.Password = PasswordHelper.HashPassword(model.Password);
+            user.ResetCode = null;
+            user.UpdatedDate = DateTime.UtcNow;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            var userDictionary = new Dictionary<string, string>
+            {
+                {"{name}",user.Name },
+            };
+            await _emailTemplateService.SendEmail("Reset Password Code", GetEmailTemplatePath() + "/ResetPasswordSuccess.html", user.Email, userDictionary);
+
+            return new ResponseModel(true, "Password reset successfully");
         }
     }
 }

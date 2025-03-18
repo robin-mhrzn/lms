@@ -39,5 +39,7 @@ public partial class User
 
     public DateTime? TwoFaverifiedDate { get; set; }
 
+    public string? ResetCode { get; set; }
+
     public virtual Role Role { get; set; } = null!;
 }
