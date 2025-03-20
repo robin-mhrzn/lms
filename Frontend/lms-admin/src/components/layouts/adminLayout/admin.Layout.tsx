@@ -6,7 +6,7 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 // import "./styles.css";
 import DashboardTitle from "./dashboardTitle.Component";
 import { Link } from "react-router-dom";
@@ -14,8 +14,10 @@ import { useDispatch } from "react-redux";
 import { logout } from "../../../redux/reducer/authReducer";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
+import { PATHS } from "../../../utils/Navigation";
 const { Header, Content, Footer, Sider } = Layout;
 const AdminLayout = () => {
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(window.innerWidth < 768);
   const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.auth.user);
@@ -32,26 +34,27 @@ const AdminLayout = () => {
   } = theme.useToken();
   const dashboardMenuItems = [
     {
-      key: "1",
-      icon: <DashboardOutlined />,
-      label: "Dashboard",
+      key: "/admin",
+      label: (
+        <Link to="/admin" className="menu-item">
+          <DashboardOutlined /> Dashboard
+        </Link>
+      ),
     },
     {
-      key: "2",
-      icon: <UserOutlined />,
-      label: "Users",
-    },
-    {
-      key: "3",
-      icon: <SettingOutlined />,
-      label: "Settings",
+      key: "/admin/category",
+      label: (
+        <Link to={PATHS.CATEGORY} className="menu-item">
+          <UserOutlined /> Category
+        </Link>
+      ),
     },
   ];
   const items: MenuProps["items"] = [
     {
       key: "1",
       label: (
-        <Link to="/admin" className="menu-item">
+        <Link to={PATHS.DASHBOARD} className="menu-item">
           <UserOutlined /> Dashboard
         </Link>
       ),
@@ -81,15 +84,15 @@ const AdminLayout = () => {
         collapsed={collapsed}
         onCollapse={setCollapsed}
         breakpoint="md"
-        className="h-screen"
+        className="fixed left-0 top-0 h-screen overflow-auto"
       >
         <div className="flex items-center justify-center h-16 p-4">
-          <img src="logo.svg" alt="Logo" className="h-10 w-auto" />
+          <img src="/logo.svg" alt="Logo" className="h-10 w-auto" />
         </div>
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={[location.pathname]}
           items={dashboardMenuItems}
         />
       </Sider>

@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import "@ant-design/v5-patch-for-react-19";
 import { lazy, Suspense } from "react";
 import LoaderComponent from "./components/extras/loader.Component";
+import Category from "./pages/category/category";
 
 const SignIn = lazy(() => import("./pages/auth/signIn/signIn"));
 const Unauthorized = lazy(() => import("./pages/extra/UnAuthorized"));
@@ -40,6 +41,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <ChangePassword />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="category/"
+            element={
+              <ProtectedRoute>
+                <Category />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="category/:parentId/:parentName"
+            element={
+              <ProtectedRoute>
+                <Category />
               </ProtectedRoute>
             }
           />

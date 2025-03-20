@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SharedLib;
 using SharedLib.Filters;
 using SharedLib.Model.AppSettings;
 using SharedLib.Services;
@@ -76,7 +77,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(SharedEnums.Role.Admin.ToString(), policy => policy.RequireRole(SharedEnums.Role.Admin.ToString()));
+    options.AddPolicy(SharedEnums.Role.User.ToString(), policy => policy.RequireRole(SharedEnums.Role.User.ToString()));
+});
+
 var app = builder.Build();
 
 // Enable Swagger in Development

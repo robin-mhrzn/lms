@@ -20,6 +20,8 @@ const authSlice = createSlice({
       new AuthHelper().setUserData(action.payload);
     },
     logout: (state) => {
+      debugger;
+      localStorage.clear();
       state.user = null;
       state.isAuthenticated = false;
       new AuthHelper().removeUserData();

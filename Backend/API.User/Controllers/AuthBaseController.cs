@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SharedLib.Helper;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -12,12 +13,7 @@ namespace API.User.Controllers
         {
             get
             {
-                var userId = User.FindFirstValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
-                if (userId == null)
-                {
-                    return 0;
-                }
-                return Convert.ToInt32(userId);
+                return UserHelper.GetUserId(User);
             }
         }
     }

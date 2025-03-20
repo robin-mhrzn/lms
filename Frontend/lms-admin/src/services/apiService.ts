@@ -61,12 +61,13 @@ export class APIService {
         };
       })
       .catch((error) => {
+        debugger;
         if (error.response.status == 401) {
           showMessage(
             false,
             "You are logged out from system. Please login again"
           );
-          logout();
+          localStorage.clear();
           location.href = "/";
         } else {
           showMessage(

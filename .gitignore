@@ -7,3 +7,7 @@ Backend/LMS.APIGateway/bin/
 Backend/LMS.APIGateway/.vs/
 Backend/API.Mailer/obj/
 Backend/API.Mailer/bin/
+Backend/API.Course/bin/
+Backend/API.Image/bin/
+Backend/API.Image/obj/
+Backend/API.Course/obj/

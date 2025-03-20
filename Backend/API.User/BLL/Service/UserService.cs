@@ -78,7 +78,7 @@ namespace API.User.BLL.Service
         }
         public async Task<ResponseModel> Signup(UserModel model)
         {
-            var roleEntity = await _context.Roles.FirstOrDefaultAsync(a => a.Name == EnumCollection.Role.User.ToString());
+            var roleEntity = await _context.Roles.FirstOrDefaultAsync(a => a.Name == SharedEnums.Role.User.ToString());
             if (roleEntity == null)
             {
                 return new ResponseModel(false, "Something went wrong. Please contact admin");
@@ -125,9 +125,9 @@ namespace API.User.BLL.Service
                 return new ResponseModel(false, "Invalid email or password");
             if (!user.IsActive)
                 return new ResponseModel(false, "User not active. Please contact admin");
-            if (user.Role.Name == EnumCollection.Role.Admin.ToString() && !model.IsAdminType)
+            if (user.Role.Name == SharedEnums.Role.Admin.ToString() && !model.IsAdminType)
                 return new ResponseModel(false, "Invalid email or password");
-            else if (user.Role.Name == EnumCollection.Role.User.ToString() && model.IsAdminType)
+            else if (user.Role.Name == SharedEnums.Role.User.ToString() && model.IsAdminType)
                 return new ResponseModel(false, "Invalid email or password");
             var token = _jwtHelper.GenerateToken(user.UserId, user.Email, user.Role.Name);
             return new ResponseModel(true, "You are logged in successfully",
