@@ -47,7 +47,6 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(SharedEnums.Role.Admin.ToString(), policy => policy.RequireRole(SharedEnums.Role.Admin.ToString()));
 });
-// Swagger Configuration
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo

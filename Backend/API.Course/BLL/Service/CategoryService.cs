@@ -25,6 +25,7 @@ namespace API.Course.BLL.Service
                     Name = model.Name,
                     Description = model.Description,
                     CreatedBy = userId,
+                    ImageUrl=model.ImageUrl,
                     CreatedDate = DateTime.UtcNow,
                     IsActive = model.IsActive,
                     ParentId = model.ParentId,
@@ -40,6 +41,7 @@ namespace API.Course.BLL.Service
                 }
                 else
                 {
+                    category.ImageUrl = model.ImageUrl;
                     category.Name = model.Name;
                     category.Description = model.Description;
                     category.IsActive = model.IsActive;

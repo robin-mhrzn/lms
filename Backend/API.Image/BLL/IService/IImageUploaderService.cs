@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using SharedLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace API.Image.BLL.IService
 {
-    internal interface IImageUploaderService
+    public interface IImageUploaderService
     {
-        Task<string> UploadImage(IFormFile file);
+        Task<ResponseModel> UploadImage(string fileType, IFormFile file);
     }
 }

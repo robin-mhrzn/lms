@@ -1,25 +1,31 @@
 import { Button, Form, Input, Modal, Space, Switch } from "antd";
 import { ICategoryDataModel } from "../../services/categoryService/categoryService";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { RcFile } from "antd/es/upload";
+import ImageUploader from "../common/ImageUpload/ImageUploader";
 
 export interface AddComponentProps {
   isModalOpen: boolean;
   data: ICategoryDataModel;
+  setFile?: (file: RcFile) => void;
   handleCancel?: () => void;
   handleAddCategory?: (model: any) => void;
+  loader: boolean;
 }
 const AddComponent: React.FC<AddComponentProps> = (props) => {
-  const handleAddCategory = (model: ICategoryDataModel) => {
+  const handleAddCategory = async (model: ICategoryDataModel) => {
     if (props.handleAddCategory) {
       props.handleAddCategory(model);
     }
   };
+
   const [form] = Form.useForm();
   useEffect(() => {
     if (props.data) {
       form.setFieldsValue(props.data);
     }
   }, [props.data, form]);
+
   return (
     <Modal
       title="Add Category"
@@ -35,6 +41,7 @@ const AddComponent: React.FC<AddComponentProps> = (props) => {
               type="primary"
               onClick={() => form.submit()}
               className="rounded-lg"
+              loading={props.loader}
             >
               Submit
             </Button>
@@ -57,6 +64,17 @@ const AddComponent: React.FC<AddComponentProps> = (props) => {
         >
           <Input.TextArea />
         </Form.Item>
+
+        <Form.Item label="Upload Image">
+          <ImageUploader
+            fileUrl={props.data?.imageUrl}
+            onChange={function (file: RcFile): void {
+              if (props.setFile) {
+                props.setFile(file);
+              }
+            }}
+          ></ImageUploader>
+        </Form.Item>
         <Form.Item name="isActive" label="Status" valuePropName="checked">
           <Switch checkedChildren="Active" unCheckedChildren="Inactive" />
         </Form.Item>
@@ -66,18 +84,6 @@ const AddComponent: React.FC<AddComponentProps> = (props) => {
         <Form.Item name="parentId" hidden>
           <Input type="hidden" />
         </Form.Item>
-        <Form.Item name="imageUrl" hidden>
-          <Input type="hidden" />
-        </Form.Item>
-
-        {/* <Form.Item>
-          <Space>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-            <Button onClick={props.handleCancel}>Cancel</Button>
-          </Space>
-        </Form.Item> */}
       </Form>
     </Modal>
   );

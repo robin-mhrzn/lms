@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Space, Table, TableColumnsType, TableProps } from "antd";
 import {
   CategoryService,
@@ -7,9 +7,12 @@ import {
 } from "../../services/categoryService/categoryService";
 import { ResponseModel } from "../../services/apiService";
 import AddComponent, { AddComponentProps } from "./add.Component";
-import { showConfirm } from "../../utils/commonUtil";
+import { showConfirm, showMessage } from "../../utils/commonUtil";
 import { useNavigate } from "react-router-dom";
 import { PATHS } from "../../utils/Navigation";
+import { FileUploadService } from "../../services/fileUploadService/fileUploadService";
+import { RcFile } from "antd/es/upload";
+import { EnumImageType } from "../../utils/enumerations";
 
 type OnChange = NonNullable<TableProps<ICategoryDataModel>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
@@ -21,7 +24,9 @@ type CategoryListProps = {
 };
 const CategoryList: React.FC<CategoryListProps> = (props) => {
   const service = new CategoryService();
+  const fileService = new FileUploadService();
   const navigate = useNavigate();
+  const [file, setFile] = useState<RcFile | null>(null);
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
   const [data, setDataSource] = useState<ICategoryDataModel[]>([]);
@@ -36,6 +41,7 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
   const [addModal, setAddModal] = useState<AddComponentProps>({
     isModalOpen: false,
     data: {} as ICategoryDataModel,
+    loader: false,
   });
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -100,10 +106,12 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
       ),
     },
   ];
-  const handleEdit = (record: ICategoryDataModel) => {
+  const handleEdit = useCallback((record: ICategoryDataModel) => {
     setAddModal({ ...addModal, isModalOpen: true, data: record });
-  };
-  const handleModalPopup = () => {
+    setFile(null);
+  }, []);
+  const handleModalPopup = useCallback(() => {
+    setFile(null);
     setAddModal({
       ...addModal,
       isModalOpen: true,
@@ -117,7 +125,7 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
         parentName: "",
       } as ICategoryDataModel,
     });
-  };
+  }, [pagination.parentId]);
   const handelCancelPopup = () => {
     setAddModal({
       ...addModal,
@@ -125,49 +133,48 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
       data: {} as ICategoryDataModel,
     });
   };
-  const fetchData = (
-    paginationParams: ICategoryListRequestModel,
-    filters: Filters,
-    sorter: Sorts
-  ) => {
-    debugger;
-    setLoading(true);
-    service.list({
-      data: paginationParams,
-      callback: (res?: ResponseModel) => {
-        if (res != null && res.success === true) {
-          setDataSource(res.data.data);
-          paginationParams.total = res.data.totalRecord;
-          setPagination(paginationParams);
-        } else {
-          setDataSource([]);
-          setPagination({
-            currentPage: 1,
-            pageSize: 10,
-            sortField: "",
-            sortOrder: "",
-            total: 0,
-          });
-        }
-        setLoading(false);
-      },
-    });
-  };
+  const fetchData = useCallback(
+    (
+      paginationParams: ICategoryListRequestModel,
+      filters: Filters,
+      sorter: Sorts
+    ) => {
+      setLoading(true);
+      service.list({
+        data: paginationParams,
+        callback: (res?: ResponseModel) => {
+          if (res != null && res.success === true) {
+            setDataSource(res.data.data);
+            paginationParams.total = res.data.totalRecord;
+            setPagination(paginationParams);
+          } else {
+            setDataSource([]);
+            setPagination({
+              currentPage: 1,
+              pageSize: paginationParams.pageSize,
+              sortField: "",
+              sortOrder: "",
+              total: 0,
+            });
+          }
+          setLoading(false);
+        },
+      });
+    },
+    []
+  );
 
   useEffect(() => {
-    debugger;
     const updatePagination = { ...pagination, parentId: props.parentId };
+    debugger;
     setPagination(updatePagination);
     fetchData(updatePagination, filteredInfo, sortedInfo);
   }, [props.parentId]);
 
-  const handleChange: OnChange = (
-    tablePagination: any,
-    filters,
-    sorter: any
-  ) => {
-    fetchData(
-      {
+  const handleChange: OnChange = useCallback(
+    (tablePagination: any, filters, sorter: any) => {
+      const updatedPagination = {
+        ...pagination,
         pageSize: tablePagination.pageSize,
         currentPage: tablePagination.current,
         sortField: sorter?.field || pagination.sortField,
@@ -177,13 +184,13 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
             : sorter?.order === "descend"
             ? "desc"
             : "",
-      } as ICategoryListRequestModel,
-      filters,
-      sorter
-    );
-    setFilteredInfo(filters);
-    setSortedInfo(sorter as Sorts);
-  };
+      };
+      fetchData(updatedPagination, filters, sorter);
+      setFilteredInfo(filters);
+      setSortedInfo(sorter as Sorts);
+    },
+    [fetchData, pagination.sortField]
+  );
   const handleDelete = (id: number) => {
     showConfirm("Are you sure you want to delete this record?", () => {
       service.deleteCategory({
@@ -197,31 +204,52 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
     });
   };
 
-  const clearFilters = () => {
-    setFilteredInfo({});
-    fetchData(pagination, {}, sortedInfo);
-  };
+  // const clearFilters = () => {
+  //   setFilteredInfo({});
+  //   fetchData(pagination, {}, sortedInfo);
+  // };
 
-  const clearAll = () => {
-    setFilteredInfo({});
-    setSortedInfo({});
-    fetchData(pagination, {}, {});
-  };
-  const handleAddCategory = (model: any) => {
-    service.saveCategory({
-      data: model,
-      callback: (res?: ResponseModel) => {
-        if (res?.success) {
-          fetchData(pagination, filteredInfo, sortedInfo);
-          setAddModal({
-            ...addModal,
-            isModalOpen: false,
-            data: {} as ICategoryDataModel,
-          });
-        }
-      },
-    });
-  };
+  // const clearAll = () => {
+  //   setFilteredInfo({});
+  //   setSortedInfo({});
+  //   fetchData(pagination, {}, {});
+  // };
+  const handleAddCategory = useCallback(
+    (model: ICategoryDataModel) => {
+      setAddModal({ ...addModal, loader: true });
+      fileService.uploadImage({
+        fileType: EnumImageType.Category,
+        file: file,
+        callback: (res: ResponseModel) => {
+          if (res.success) {
+            if (res.data != "" && res.data != null) {
+              model.imageUrl = res.data;
+            }
+            service.saveCategory({
+              data: model,
+              callback: (res?: ResponseModel) => {
+                if (res?.success) {
+                  showMessage(true, "Record saved successfully");
+                  fetchData(pagination, filteredInfo, sortedInfo);
+                  setAddModal({
+                    ...addModal,
+                    isModalOpen: false,
+                    data: {} as ICategoryDataModel,
+                    loader: false,
+                  });
+                } else {
+                  setAddModal({ ...addModal, loader: false });
+                }
+              },
+            });
+          } else {
+            setAddModal({ ...addModal, loader: false });
+          }
+        },
+      });
+    },
+    [fetchData, file, pagination, filteredInfo, sortedInfo]
+  );
   return (
     <div>
       {props.parentId && (
@@ -242,6 +270,7 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
         {...addModal}
         handleCancel={handelCancelPopup}
         handleAddCategory={handleAddCategory}
+        setFile={setFile}
       ></AddComponent>
       <div className="mb-2">
         <Button type="primary" onClick={handleModalPopup} className="mb-4">

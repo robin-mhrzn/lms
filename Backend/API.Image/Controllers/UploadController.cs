@@ -1,26 +1,27 @@
 ﻿using API.Image.BLL.IService;
-using Microsoft.AspNetCore.Http;
+using API.Image.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-namespace API.Image.Controllers
+
+[Route("[controller]")]
+[Authorize]
+public class UploadController : ControllerBase
 {
+    private readonly IImageUploaderService _imageUploaderService;
 
-    [Route("[controller]")]
-    [ApiController]
-    public class UploadController : ControllerBase
+    public UploadController(IImageUploaderService imageUploaderService)
     {
-        private readonly IImageUploaderService _imageUploaderService;
-        UploadController(IImageUploaderService imageUploaderService)
-        {
-            _imageUploaderService = imageUploaderService;
-        }
+        _imageUploaderService = imageUploaderService;
+    }
 
-        [HttpPost("image")]
-        public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
+    [HttpPost("image")]
+    public async Task<IActionResult> UploadImage([FromForm] UploadModel model)
+    {
+        if (Request.Form.Files.Count == 0)
         {
-            return Ok(_imageUploaderService.UploadImage(file));
+            return BadRequest("No file uploaded.");
         }
+        var result = await _imageUploaderService.UploadImage(model.FileType,model.File);
+        return Ok(result);
     }
 }

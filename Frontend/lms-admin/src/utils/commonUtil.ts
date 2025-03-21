@@ -26,7 +26,13 @@ export const showConfirm = (message: string, callback: () => void) => {
     onCancel() {},
   });
 };
-
+export const getImageUrl = (imageUrl: string | undefined): string | null => {
+  if (imageUrl) {
+    const domain = import.meta.env.VITE_REACT_APP_IMAGE_DOMAIN;
+    return domain ? `${domain}${imageUrl}` : null;
+  }
+  return null;
+};
 export const formatDate = (isoDate: string) => {
   const formattedDate = new Date(isoDate).toLocaleDateString("en-CA", {
     year: "numeric",

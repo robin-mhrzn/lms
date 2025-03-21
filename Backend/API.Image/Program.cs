@@ -1,20 +1,22 @@
-using API.Image.BLL.IService;
+﻿using API.Image.BLL.IService;
 using API.Image.BLL.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
-// Add services to the container.
+builder.Services.AddControllers();
 
+builder.Services.AddScoped<IImageUploaderService, ImageUploaderService>();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddTransient<IImageUploaderService, ImageUploaderService>();
-
-// Swagger Configuration
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "CourseService",
+        Title = "ImageService",
         Version = "v1"
     });
 });
@@ -28,11 +30,30 @@ builder.Services.AddCors(options =>
                   .AllowAnyHeader();
         });
 });
-builder.Services.AddControllers();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var jwtSettings = configuration.GetSection("JwtSettings");
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSettings["SecretKey"])
+            )
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -44,10 +65,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
 app.UseCors("AllowAll");
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseStaticFiles();
+app.MapControllers();
 
 app.Run();

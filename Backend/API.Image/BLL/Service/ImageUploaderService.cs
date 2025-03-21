@@ -1,8 +1,9 @@
 ﻿using API.Image.BLL.IService;
+using SharedLib;
 
 namespace API.Image.BLL.Service
 {
-    public class ImageUploaderService:IImageUploaderService
+    public class ImageUploaderService : IImageUploaderService
     {
         private readonly string _uploadPath;
 
@@ -15,21 +16,23 @@ namespace API.Image.BLL.Service
             }
         }
 
-        public async Task<string> UploadImage(IFormFile file)
+        public async Task<ResponseModel> UploadImage(string fileType, IFormFile file)
         {
-            if (file == null || file.Length == 0)
+            var currentDate = DateTime.UtcNow;
+
+            var fileDirectory = Path.Combine(fileType, currentDate.Year.ToString(), currentDate.Month.ToString("D2"), currentDate.Day.ToString("D2"));
+            var uploadDirectory = Path.Combine(_uploadPath, fileDirectory);
+            if (!Directory.Exists(uploadDirectory))
             {
-                throw new ArgumentException("No file uploaded.");
+                Directory.CreateDirectory(uploadDirectory);
             }
-
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-            var filePath = Path.Combine(_uploadPath, fileName);
-
+            var filePath = Path.Combine(uploadDirectory, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
-            return fileName; 
+            return new ResponseModel(true, "File uploaded successfully", Path.Combine(fileDirectory, fileName));
         }
     }
 }
