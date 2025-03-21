@@ -8,7 +8,6 @@ const Category = () => {
         parentId={parentId != undefined ? Number(parentId) : undefined}
         name={parentName}
       />
-      ;
     </>
   );
 };

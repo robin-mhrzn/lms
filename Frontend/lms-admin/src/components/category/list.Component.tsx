@@ -13,6 +13,7 @@ import { PATHS } from "../../utils/Navigation";
 import { FileUploadService } from "../../services/fileUploadService/fileUploadService";
 import { RcFile } from "antd/es/upload";
 import { EnumImageType } from "../../utils/enumerations";
+import TableSearch from "../common/Table/TableSearch";
 
 type OnChange = NonNullable<TableProps<ICategoryDataModel>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
@@ -37,6 +38,7 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
     sortOrder: "",
     total: 0,
     parentId: props.parentId,
+    filters: [],
   });
   const [addModal, setAddModal] = useState<AddComponentProps>({
     isModalOpen: false,
@@ -50,6 +52,7 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
       title: "Category Id",
       dataIndex: "categoryId",
       key: "categoryId",
+      width: "15%",
       sorter: true,
       sortOrder:
         sortedInfo.columnKey === "categoryId" ? sortedInfo.order : null,
@@ -60,18 +63,32 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
       dataIndex: "name",
       key: "name",
       sorter: true,
+      width: "25%",
       sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+      ...TableSearch<ICategoryDataModel>({ dataIndex: "name" }),
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      width: "40%",
     },
     {
       title: "Status",
       dataIndex: "isActive",
       key: "isActive",
+      width: "15%",
       render: (isActive: boolean) => (isActive ? "Active" : "Inactive"),
+      filters: [
+        {
+          text: "Active",
+          value: "True",
+        },
+        {
+          text: "Inactive",
+          value: "False",
+        },
+      ],
     },
     {
       title: "Actions",
@@ -106,11 +123,12 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
       ),
     },
   ];
-  const handleEdit = useCallback((record: ICategoryDataModel) => {
+  const handleEdit = (record: ICategoryDataModel) => {
     setAddModal({ ...addModal, isModalOpen: true, data: record });
     setFile(null);
-  }, []);
-  const handleModalPopup = useCallback(() => {
+  };
+
+  const handleModalPopup = () => {
     setFile(null);
     setAddModal({
       ...addModal,
@@ -125,72 +143,88 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
         parentName: "",
       } as ICategoryDataModel,
     });
-  }, [pagination.parentId]);
-  const handelCancelPopup = () => {
+  };
+  const handelCancelPopup = useCallback(() => {
     setAddModal({
       ...addModal,
       isModalOpen: false,
       data: {} as ICategoryDataModel,
     });
-  };
-  const fetchData = useCallback(
-    (
-      paginationParams: ICategoryListRequestModel,
-      filters: Filters,
-      sorter: Sorts
-    ) => {
-      setLoading(true);
-      service.list({
-        data: paginationParams,
-        callback: (res?: ResponseModel) => {
-          if (res != null && res.success === true) {
-            setDataSource(res.data.data);
-            paginationParams.total = res.data.totalRecord;
-            setPagination(paginationParams);
-          } else {
-            setDataSource([]);
-            setPagination({
-              currentPage: 1,
-              pageSize: paginationParams.pageSize,
-              sortField: "",
-              sortOrder: "",
-              total: 0,
-            });
-          }
-          setLoading(false);
-        },
+  }, [addModal]);
+  const fetchData = (
+    paginationParams: ICategoryListRequestModel,
+    filters: Filters,
+    sorter: Sorts
+  ) => {
+    debugger;
+    setLoading(true);
+    const updatePagination = {
+      ...paginationParams,
+      parentId: props.parentId,
+      sortField: sorter?.field || pagination.sortField,
+      sortOrder:
+        sorter?.order === "ascend"
+          ? "asc"
+          : sorter?.order === "descend"
+          ? "desc"
+          : "",
+      filters: [],
+    } as ICategoryListRequestModel;
+    if (filters && Object.keys(filters).length > 0) {
+      Object.keys(filters).forEach((key) => {
+        if ((filters[key] ?? []).length > 0) {
+          updatePagination.filters.push({
+            fieldName: key,
+            fieldValue: String(filters[key]?.[0] ?? ""),
+          });
+        }
       });
-    },
-    []
-  );
+    }
+    console.log(updatePagination);
+    service.list({
+      data: updatePagination,
+      callback: (res?: ResponseModel) => {
+        if (res != null && res.success === true) {
+          setDataSource(res.data.data);
+          paginationParams.total = res.data.totalRecord;
+          setPagination(paginationParams);
+        } else {
+          setDataSource([]);
+          setPagination({
+            ...pagination,
+            currentPage: 1,
+            pageSize: paginationParams.pageSize,
+            sortField: "",
+            sortOrder: "",
+            total: 0,
+          });
+        }
+        setLoading(false);
+      },
+    });
+  };
 
   useEffect(() => {
     const updatePagination = { ...pagination, parentId: props.parentId };
-    debugger;
     setPagination(updatePagination);
     fetchData(updatePagination, filteredInfo, sortedInfo);
   }, [props.parentId]);
 
-  const handleChange: OnChange = useCallback(
-    (tablePagination: any, filters, sorter: any) => {
-      const updatedPagination = {
-        ...pagination,
-        pageSize: tablePagination.pageSize,
-        currentPage: tablePagination.current,
-        sortField: sorter?.field || pagination.sortField,
-        sortOrder:
-          sorter?.order === "ascend"
-            ? "asc"
-            : sorter?.order === "descend"
-            ? "desc"
-            : "",
-      };
-      fetchData(updatedPagination, filters, sorter);
-      setFilteredInfo(filters);
-      setSortedInfo(sorter as Sorts);
-    },
-    [fetchData, pagination.sortField]
-  );
+  const handleChange: OnChange = (
+    tablePagination: any,
+    filters,
+    sorter: any
+  ) => {
+    const updatedPagination = {
+      ...pagination,
+      pageSize: tablePagination.pageSize,
+      currentPage: tablePagination.current,
+    };
+    fetchData(updatedPagination, filters, sorter);
+    setFilteredInfo(filters);
+    setSortedInfo(sorter as Sorts);
+  };
+
   const handleDelete = (id: number) => {
     showConfirm("Are you sure you want to delete this record?", () => {
       service.deleteCategory({
@@ -204,94 +238,83 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
     });
   };
 
-  // const clearFilters = () => {
-  //   setFilteredInfo({});
-  //   fetchData(pagination, {}, sortedInfo);
-  // };
-
-  // const clearAll = () => {
-  //   setFilteredInfo({});
-  //   setSortedInfo({});
-  //   fetchData(pagination, {}, {});
-  // };
-  const handleAddCategory = useCallback(
-    (model: ICategoryDataModel) => {
-      setAddModal({ ...addModal, loader: true });
-      fileService.uploadImage({
-        fileType: EnumImageType.Category,
-        file: file,
-        callback: (res: ResponseModel) => {
-          if (res.success) {
-            if (res.data != "" && res.data != null) {
-              model.imageUrl = res.data;
-            }
-            service.saveCategory({
-              data: model,
-              callback: (res?: ResponseModel) => {
-                if (res?.success) {
-                  showMessage(true, "Record saved successfully");
-                  fetchData(pagination, filteredInfo, sortedInfo);
-                  setAddModal({
-                    ...addModal,
-                    isModalOpen: false,
-                    data: {} as ICategoryDataModel,
-                    loader: false,
-                  });
-                } else {
-                  setAddModal({ ...addModal, loader: false });
-                }
-              },
-            });
-          } else {
-            setAddModal({ ...addModal, loader: false });
+  const handleAddCategory = (model: ICategoryDataModel) => {
+    setAddModal({ ...addModal, loader: true });
+    fileService.uploadImage({
+      fileType: EnumImageType.Category,
+      file: file,
+      callback: (res: ResponseModel) => {
+        if (res.success) {
+          if (res.data != "" && res.data != null) {
+            model.imageUrl = res.data;
           }
-        },
-      });
-    },
-    [fetchData, file, pagination, filteredInfo, sortedInfo]
-  );
+          service.saveCategory({
+            data: model,
+            callback: (res?: ResponseModel) => {
+              if (res?.success) {
+                showMessage(true, "Record saved successfully");
+                fetchData(pagination, filteredInfo, sortedInfo);
+                setAddModal({
+                  ...addModal,
+                  isModalOpen: false,
+                  data: {} as ICategoryDataModel,
+                  loader: false,
+                });
+              } else {
+                setAddModal({ ...addModal, loader: false });
+              }
+            },
+          });
+        } else {
+          setAddModal({ ...addModal, loader: false });
+        }
+      },
+    });
+  };
   return (
-    <div>
-      {props.parentId && (
-        <div className="mb-4 p-4 bg-gray-100 rounded shadow">
-          <h2 className="text-xl font-bold text-gray-800">
-            Parent Category: <span className="text-blue-600">{props.name}</span>
-          </h2>
-          <Button
-            type="default"
-            className="mt-2"
-            onClick={() => navigate(PATHS.CATEGORY)}
-          >
-            Back to Main Categories
+    <>
+      <div>
+        {props.parentId && (
+          <div className="mb-4 p-4 bg-gray-100 rounded shadow">
+            <h2 className="text-xl font-bold text-gray-800">
+              Parent Category:
+              <span className="text-blue-600">{props.name}</span>
+            </h2>
+            <Button
+              type="default"
+              className="mt-2"
+              onClick={() => navigate(PATHS.CATEGORY)}
+            >
+              Back to Main Categories
+            </Button>
+          </div>
+        )}
+        <AddComponent
+          {...addModal}
+          handleCancel={handelCancelPopup}
+          handleAddCategory={handleAddCategory}
+          setFile={setFile}
+        ></AddComponent>
+        <div className="mb-2">
+          <Button type="primary" onClick={handleModalPopup} className="mb-4">
+            Add Category
           </Button>
         </div>
-      )}
-      <AddComponent
-        {...addModal}
-        handleCancel={handelCancelPopup}
-        handleAddCategory={handleAddCategory}
-        setFile={setFile}
-      ></AddComponent>
-      <div className="mb-2">
-        <Button type="primary" onClick={handleModalPopup} className="mb-4">
-          Add Category
-        </Button>
+        <Table<ICategoryDataModel>
+          columns={columns}
+          dataSource={data}
+          onChange={handleChange}
+          loading={loading}
+          pagination={{
+            current: pagination.currentPage,
+            pageSize: pagination.pageSize,
+            total: pagination.total,
+            showSizeChanger: true,
+          }}
+          rowKey="categoryId"
+        />
       </div>
-      <Table<ICategoryDataModel>
-        columns={columns}
-        dataSource={data}
-        onChange={handleChange}
-        loading={loading}
-        pagination={{
-          current: pagination.currentPage,
-          pageSize: pagination.pageSize,
-          total: pagination.total,
-          showSizeChanger: true,
-        }}
-        rowKey="categoryId"
-      />
-    </div>
+    </>
   );
 };
-
 export default CategoryList;

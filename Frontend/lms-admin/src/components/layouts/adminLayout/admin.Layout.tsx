@@ -2,7 +2,6 @@ import { Avatar, Dropdown, Layout, Menu, MenuProps, theme } from "antd";
 import {
   DashboardOutlined,
   UserOutlined,
-  SettingOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";

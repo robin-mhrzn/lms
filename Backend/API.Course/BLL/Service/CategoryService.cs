@@ -76,7 +76,7 @@ namespace API.Course.BLL.Service
                              ImageUrl = c.ImageUrl,
                              ParentName = parentCategoryName
                          }).AsNoTracking();
-            switch (model.SortField)
+            switch (model.SortField.ToLower())
             {
                 case "name":
                     query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.Name) : query.OrderByDescending(a => a.Name);
@@ -88,6 +88,21 @@ namespace API.Course.BLL.Service
                     query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.CategoryId) : query.OrderByDescending(a => a.CategoryId);
                     break;
 
+            }
+            foreach(var filter in model.Filters)
+            {
+                switch (filter.FieldName.ToLower())
+                {
+                    case "name":
+                        query = query.Where(a => a.Name.Contains(filter.FieldValue));
+                        break;
+                    case "isactive":
+                        if (bool.TryParse(filter.FieldValue, out var isActive))
+                        {
+                            query = query.Where(c => c.IsActive == isActive);
+                        }
+                        break;
+                }
             }
             int total = await query.CountAsync();
 

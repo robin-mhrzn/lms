@@ -1,9 +1,8 @@
 import { Button, Form, Input, Modal, Space, Switch } from "antd";
 import { ICategoryDataModel } from "../../services/categoryService/categoryService";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { RcFile } from "antd/es/upload";
 import ImageUploader from "../common/ImageUpload/ImageUploader";
-
 export interface AddComponentProps {
   isModalOpen: boolean;
   data: ICategoryDataModel;
@@ -18,7 +17,6 @@ const AddComponent: React.FC<AddComponentProps> = (props) => {
       props.handleAddCategory(model);
     }
   };
-
   const [form] = Form.useForm();
   useEffect(() => {
     if (props.data) {
