@@ -25,7 +25,7 @@ namespace API.Course.BLL.Service
                     Name = model.Name,
                     Description = model.Description,
                     CreatedBy = userId,
-                    ImageUrl=model.ImageUrl,
+                    ImageUrl = model.ImageUrl,
                     CreatedDate = DateTime.UtcNow,
                     IsActive = model.IsActive,
                     ParentId = model.ParentId,
@@ -65,7 +65,7 @@ namespace API.Course.BLL.Service
                 parentCategoryName = category == null ? "" : category.Name;
             }
             var query = (from c in _context.Categories
-                         where (model.ParentId == null || c.ParentId == model.ParentId || model.ParentId == 0)
+                         where ( c.ParentId == model.ParentId || (model.ParentId==0 && c.ParentId == null))
                          select new CategoryListModel
                          {
                              Name = c.Name,
@@ -82,14 +82,14 @@ namespace API.Course.BLL.Service
                     query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.Name) : query.OrderByDescending(a => a.Name);
                     break;
                 case "status":
-                    query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.Name) : query.OrderByDescending(a => a.Name);
+                    query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.IsActive) : query.OrderByDescending(a => a.IsActive);
                     break;
                 default:
                     query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.CategoryId) : query.OrderByDescending(a => a.CategoryId);
                     break;
 
             }
-            foreach(var filter in model.Filters)
+            foreach (var filter in model.Filters)
             {
                 switch (filter.FieldName.ToLower())
                 {
@@ -134,6 +134,27 @@ namespace API.Course.BLL.Service
             {
                 return new ResponseModel(false, "No record found");
             }
+        }
+
+        public async Task<ResponseModel> GetParentCategories()
+        {
+            var categories = await _context.Categories.Where(a => a.IsActive == true && a.ParentId == null)
+                .Select(n => new
+                {
+                    n.CategoryId,
+                    n.Name
+                }).OrderBy(a=>a.Name).AsNoTracking().ToListAsync();
+            return new ResponseModel(true, "success", categories);
+        }
+        public async Task<ResponseModel> GetCategories(int parentCategoryId)
+        {
+            var categories = await _context.Categories.Where(a => a.IsActive == true && a.ParentId == parentCategoryId)
+                .Select(n => new
+                {
+                    n.CategoryId,
+                    n.Name
+                }).OrderBy(c=>c.Name).AsNoTracking().ToListAsync();
+            return new ResponseModel(true, "success", categories);
         }
     }
 }

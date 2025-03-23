@@ -13,7 +13,7 @@ namespace API.Course.Controllers
         {
             this._categoryService = categoryService;
         }
-       
+
         [HttpPost("Add")]
         public async Task<IActionResult> AddCategory([FromBody] CategoryModel model)
         {
@@ -30,6 +30,18 @@ namespace API.Course.Controllers
         public async Task<IActionResult> Delete([FromBody] CategoryDeleteModel model)
         {
             return Ok(await this._categoryService.Delete(model.id));
+        }
+
+        [HttpGet("ParentCategory")]
+        public async Task<IActionResult> ParentCategory()
+        {
+            return Ok(await this._categoryService.GetParentCategories());
+        }
+
+        [HttpGet("ChildCategory")]
+        public async Task<IActionResult> ChildCategory(int parentCategoryId)
+        {
+            return Ok(await this._categoryService.GetCategories(parentCategoryId));
         }
     }
 }

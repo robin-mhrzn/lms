@@ -8,6 +8,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SharedLib;
+using API.Course.DAL.Migrations;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
@@ -20,6 +21,7 @@ builder.Services.AddDbContext<CourseContext>(options =>
 
 // Add Services
 builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<ICourseService, CourseService>();
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<CustomValidationFilter>();
@@ -83,5 +85,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseCors("AllowAll");
-
+DataMigration.MigrateData(app);
 app.Run();

@@ -13,10 +13,6 @@
       {
         "Path": "..\\API.Course\\API.Course.csproj",
         "Action": "Start"
-      },
-      {
-        "Path": "..\\API.Image\\API.Image.csproj",
-        "Action": "Start"
       }
     ]
   }

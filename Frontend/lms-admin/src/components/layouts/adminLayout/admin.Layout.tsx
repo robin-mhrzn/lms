@@ -33,18 +33,26 @@ const AdminLayout = () => {
   } = theme.useToken();
   const dashboardMenuItems = [
     {
-      key: "/admin",
+      key: PATHS.DASHBOARD,
       label: (
-        <Link to="/admin" className="menu-item">
+        <Link to={PATHS.DASHBOARD} className="menu-item">
           <DashboardOutlined /> Dashboard
         </Link>
       ),
     },
     {
-      key: "/admin/category",
+      key: PATHS.CATEGORY,
       label: (
         <Link to={PATHS.CATEGORY} className="menu-item">
           <UserOutlined /> Category
+        </Link>
+      ),
+    },
+    {
+      key: PATHS.COURSELIST,
+      label: (
+        <Link to={PATHS.COURSELIST} className="menu-item">
+          <UserOutlined /> Course
         </Link>
       ),
     },

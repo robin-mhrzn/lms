@@ -4,6 +4,11 @@ import { APIService, ResponseModel } from "../apiService";
 export interface ICategoryListRequestModel extends IPaginationModel {
   parentId?: number;
 }
+
+export interface ICategorySelectModel {
+  categoryId: number;
+  name: string;
+}
 export interface ICategoryDataModel {
   key: string;
   name: string;
@@ -75,6 +80,40 @@ export class CategoryService {
           showMessage(true, "Record deleted successfully");
         }
         callback(res.data as ResponseModel);
+      });
+  };
+  getParentCategoryList = ({
+    callback,
+  }: {
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "category/ParentCategory",
+        method: "GET",
+      })
+      .then((res?: any) => {
+        if (res?.data?.success == true) {
+          callback(res?.data as ResponseModel);
+        }
+      });
+  };
+  getChildCategory = ({
+    parentCategoryId,
+    callback,
+  }: {
+    parentCategoryId: number;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "category/ChildCategory?parentCategoryId=" + parentCategoryId,
+        method: "GET",
+      })
+      .then((res?: any) => {
+        if (res?.data?.success == true) {
+          callback(res.data as ResponseModel);
+        }
       });
   };
 }

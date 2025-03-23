@@ -13,4 +13,5 @@ namespace API.Course.Model
         public bool IsActive { get; set; }
         
     }
+
 }

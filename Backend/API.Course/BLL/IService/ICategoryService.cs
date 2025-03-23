@@ -8,5 +8,8 @@ namespace API.Course.BLL.IService
         Task<ResponseModel> SaveCategory(int userId, CategoryModel model);
         Task<ResponseModel> List(CategoryPaginationRequestModel model);
         Task<ResponseModel> Delete(int id);
+        Task<ResponseModel> GetParentCategories();
+        Task<ResponseModel> GetCategories(int parentCategoryId);
+
     }
 }

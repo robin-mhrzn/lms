@@ -14,6 +14,19 @@
       "Priority": 1
     },
     {
+      "DownstreamPathTemplate": "/course/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7095
+        }
+      ],
+      "UpstreamPathTemplate": "/api/course/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "Priority": 1
+    },
+    {
       "DownstreamPathTemplate": "/user/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [

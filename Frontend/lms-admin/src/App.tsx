@@ -5,6 +5,8 @@ import "@ant-design/v5-patch-for-react-19";
 import { lazy, Suspense } from "react";
 import LoaderComponent from "./components/extras/loader.Component";
 import Category from "./pages/category/category";
+import CourseDetail from "./pages/course/courseDetail";
+import CourseList from "./pages/course/courseList";
 
 const SignIn = lazy(() => import("./pages/auth/signIn/signIn"));
 const Unauthorized = lazy(() => import("./pages/extra/UnAuthorized"));
@@ -21,45 +23,26 @@ const AdminLayout = lazy(
 
 function App() {
   return (
-    <Suspense fallback={<LoaderComponent></LoaderComponent>}>
+    <Suspense fallback={<LoaderComponent />}>
       <Routes>
         <Route path="/" element={<PublicLayout />}>
           <Route index element={<SignIn />} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route
-            index
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="change-password"
-            element={
-              <ProtectedRoute>
-                <ChangePassword />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="category/"
-            element={
-              <ProtectedRoute>
-                <Category />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="category/:parentId/:parentName"
-            element={
-              <ProtectedRoute>
-                <Category />
-              </ProtectedRoute>
-            }
-          />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="change-password" element={<ChangePassword />} />
+          <Route path="category" element={<Category />} />
+          <Route path="category/:parentId/:parentName" element={<Category />} />
+          <Route path="course/list" element={<CourseList />} />
+          <Route path="course/add" element={<CourseDetail />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

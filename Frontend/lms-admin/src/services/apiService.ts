@@ -61,7 +61,6 @@ export class APIService {
         };
       })
       .catch((error) => {
-        debugger;
         if (error.response.status == 401) {
           showMessage(
             false,

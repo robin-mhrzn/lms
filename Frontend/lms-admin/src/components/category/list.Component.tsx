@@ -46,7 +46,6 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
     loader: false,
   });
   const [loading, setLoading] = useState<boolean>(false);
-
   const columns: TableColumnsType<ICategoryDataModel> = [
     {
       title: "Category Id",
@@ -156,7 +155,6 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
     filters: Filters,
     sorter: Sorts
   ) => {
-    debugger;
     setLoading(true);
     const updatePagination = {
       ...paginationParams,
@@ -180,7 +178,6 @@ const CategoryList: React.FC<CategoryListProps> = (props) => {
         }
       });
     }
-    console.log(updatePagination);
     service.list({
       data: updatePagination,
       callback: (res?: ResponseModel) => {
