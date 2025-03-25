@@ -5,7 +5,8 @@ using SharedLib.Helper;
 
 namespace API.Course.Controllers
 {
-    [Authorize("Admin")]
+    //[Authorize("Admin")]
+    [Authorize]
     public class AuthBaseController : Controller
     {
         public int UserId

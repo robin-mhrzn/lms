@@ -13,7 +13,6 @@ const initialState: CourseLanguageState = {
   loading: false,
   error: null,
 };
-const courseService: CourseService = new CourseService();
 export const fetchCourseLanguage = createAsyncThunk<
   { courseLanguage: ICourseLanguageModel[] },
   void,
@@ -21,6 +20,7 @@ export const fetchCourseLanguage = createAsyncThunk<
 >("course/language", async (_, { rejectWithValue }) => {
   return new Promise<{ courseLanguage: ICourseLanguageModel[] }>(
     (resolve, reject) => {
+      const courseService: CourseService = new CourseService();
       courseService.getCourseLanguage({
         callback: (res) => {
           if (res?.success && Array.isArray(res.data)) {

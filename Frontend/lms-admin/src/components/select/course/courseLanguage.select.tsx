@@ -5,6 +5,7 @@ import { useEffect, useMemo } from "react";
 import { fetchCourseLanguage } from "../../../redux/reducer/courseLanguageReducer";
 export interface CourseLanguageSelectProps {
   onChange?: (value: number) => void;
+  value?: number;
 }
 const CourseLanguageSelect: React.FC<CourseLanguageSelectProps> = (props) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +24,7 @@ const CourseLanguageSelect: React.FC<CourseLanguageSelectProps> = (props) => {
 
   return (
     <Select
+      value={props.value}
       onChange={props.onChange}
       showSearch
       placeholder="Select a language"

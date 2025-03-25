@@ -7,11 +7,13 @@ import { fetchChildCategories } from "../../../redux/reducer/categoryReducer";
 interface ChildCategoryProps {
   parentCategoryId: number;
   onChange?: (value: number) => void;
+  value?: number;
 }
 
 const ChildCategory: React.FC<ChildCategoryProps> = ({
   parentCategoryId,
   onChange,
+  value,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -27,6 +29,7 @@ const ChildCategory: React.FC<ChildCategoryProps> = ({
 
   return (
     <Select
+      value={value}
       onChange={onChange}
       showSearch
       placeholder="Select a category"

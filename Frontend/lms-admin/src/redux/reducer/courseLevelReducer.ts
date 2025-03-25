@@ -13,7 +13,6 @@ const initialState: CourseLevelState = {
   loading: false,
   error: null,
 };
-const courseService: CourseService = new CourseService();
 export const fetchCourseLevel = createAsyncThunk<
   { courseLevel: ICourseLevelModel[] },
   void,
@@ -21,6 +20,7 @@ export const fetchCourseLevel = createAsyncThunk<
 >("course/level", async (_, { rejectWithValue }) => {
   return new Promise<{ courseLevel: ICourseLevelModel[] }>(
     (resolve, reject) => {
+      const courseService: CourseService = new CourseService();
       courseService.getCourseLevel({
         callback: (res) => {
           if (res?.success && Array.isArray(res.data)) {

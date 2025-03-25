@@ -15,7 +15,7 @@ const initialState: CategoryState = {
   loading: false,
   error: null,
 };
-const categoryService: CategoryService = new CategoryService();
+
 export const fetchParentCategories = createAsyncThunk<
   { parentCategories: ICategorySelectModel[] },
   void,
@@ -23,6 +23,7 @@ export const fetchParentCategories = createAsyncThunk<
 >("categories/fetchParentCategories", async (_, { rejectWithValue }) => {
   return new Promise<{ parentCategories: ICategorySelectModel[] }>(
     (resolve, reject) => {
+      const categoryService: CategoryService = new CategoryService();
       categoryService.getParentCategoryList({
         callback: (res) => {
           if (res?.success && Array.isArray(res.data)) {
@@ -49,6 +50,7 @@ export const fetchChildCategories = createAsyncThunk<
         subCategories: ICategorySelectModel[];
       }>((resolve, reject) => {
         if (parentCategoryId > 0) {
+          const categoryService: CategoryService = new CategoryService();
           categoryService.getChildCategory({
             parentCategoryId,
             callback: (res) => {

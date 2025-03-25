@@ -88,7 +88,7 @@ namespace API.User.BLL.Service
             {
                 return otpResponse;
             }
-            TransactionScopeHelper.Execute(() =>
+            return await TransactionScopeHelper.ExecuteAsync(async () =>
             {
                 string loginType = EnumCollection.LoginType.Manual.ToString();
                 var user = new DAL.Context.User
@@ -104,15 +104,15 @@ namespace API.User.BLL.Service
                     IsActive = true,
                 };
                 _context.Users.Add(user);
-
-                var potentialUser = _context.PotentialUsers.FirstOrDefault(a => a.Email == model.Email);
+                var potentialUser = await _context.PotentialUsers
+                                                  .FirstOrDefaultAsync(a => a.Email == model.Email);
                 if (potentialUser != null)
                 {
                     _context.PotentialUsers.Remove(potentialUser);
                 }
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
+                return new ResponseModel(true, "You are signed up successfully");
             });
-            return new ResponseModel(true, "You are signed up successfully");
         }
 
         public async Task<ResponseModel> Login(LoginModel model)

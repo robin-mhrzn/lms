@@ -7,6 +7,7 @@ import LoaderComponent from "./components/extras/loader.Component";
 import Category from "./pages/category/category";
 import CourseDetail from "./pages/course/courseDetail";
 import CourseList from "./pages/course/courseList";
+import { PATHS } from "./utils/Navigation";
 
 const SignIn = lazy(() => import("./pages/auth/signIn/signIn"));
 const Unauthorized = lazy(() => import("./pages/extra/UnAuthorized"));
@@ -42,7 +43,10 @@ function App() {
           <Route path="category" element={<Category />} />
           <Route path="category/:parentId/:parentName" element={<Category />} />
           <Route path="course/list" element={<CourseList />} />
-          <Route path="course/add" element={<CourseDetail />} />
+          <Route
+            path={PATHS.COURSEDETAIL + "/:courseId"}
+            element={<CourseDetail />}
+          />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

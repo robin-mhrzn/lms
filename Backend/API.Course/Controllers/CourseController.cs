@@ -30,16 +30,22 @@ namespace API.Course.Controllers
         [HttpPost("List")]
         public async Task<IActionResult> List([FromBody] CoursePaginationRequestModel model)
         {
-            return Ok(await  _courseService.List(model));   
+            return Ok(await _courseService.List(model));
         }
         [HttpPost("Add")]
-        public async Task<IActionResult> Add([FromBody]CourseModel model)
+        public async Task<IActionResult> Add([FromBody] CourseModel model)
         {
             return Ok(await _courseService.SaveCourse(UserId, model));
         }
 
+        [HttpGet("Get")]
+        public async Task<IActionResult> Get([FromQuery] int id)
+        {
+            return Ok(await _courseService.GetById(id));
+        }
+
         [HttpPost("SetPricing")]
-        public async Task<IActionResult> SetPricing([FromBody]CoursePricingModel model)
+        public async Task<IActionResult> SetPricing([FromBody] CoursePricingModel model)
         {
             return Ok(await _courseService.SetPricing(UserId, model));
         }
@@ -48,5 +54,19 @@ namespace API.Course.Controllers
         {
             return Ok(await _courseService.PublishCourse(UserId, model));
         }
+
+        [HttpGet("tags")]
+        public async Task<IActionResult> Tags([FromQuery] string keyword)
+        {
+            return Ok(await _courseService.GetTags(keyword));
+        }
+
+        [HttpPost("SetTags")]
+        public async Task<IActionResult> SetTags([FromBody]CourseTagsModel model)
+        {
+            return Ok(await _courseService.SetTags(model.CourseId, model.Tags));
+        }
+
+
     }
 }

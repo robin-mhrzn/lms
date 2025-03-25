@@ -29,6 +29,9 @@ export class CourseModel {
   levelId: string;
   duration: number;
   languageId: string;
+  basePrice: number;
+  price: number;
+  tags: string[];
   constructor() {
     this.courseId = 0;
     this.title = "";
@@ -38,6 +41,9 @@ export class CourseModel {
     this.levelId = "";
     this.duration = 0;
     this.languageId = "";
+    this.basePrice = 0;
+    this.price = 0;
+    this.tags = [];
   }
 }
 export interface ICourseListRequestModel extends IPaginationModel {}
@@ -114,6 +120,98 @@ export class CourseService {
         if (res?.success == true) {
           showMessage(true, "Record saved successfully");
         }
+        callback(res.data as ResponseModel);
+      });
+  };
+  getById = ({
+    id,
+    callback,
+  }: {
+    id: number;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/get/?id=" + id,
+        method: "get",
+      })
+      .then((res?: any) => {
+        callback(res.data as ResponseModel);
+      });
+  };
+  publishCourse = ({
+    courseId,
+    isPublished,
+    callback,
+  }: {
+    courseId: number;
+    isPublished: boolean;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        data: { courseId: courseId, isPublish: isPublished },
+        url: "course/publish",
+        method: "post",
+      })
+      .then((res: any) => {
+        callback(res.data as ResponseModel);
+      });
+  };
+
+  setCoursePricing = ({
+    courseId,
+    basePrice,
+    price,
+    callback,
+  }: {
+    courseId: number;
+    basePrice: number;
+    price: number;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        data: { courseId: courseId, basePrice: basePrice, price: price },
+        url: "course/SetPricing",
+        method: "post",
+      })
+      .then((res: any) => {
+        callback(res.data as ResponseModel);
+      });
+  };
+  getTags = ({
+    keyword,
+    callback,
+  }: {
+    keyword: string;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/tags/?keyword=" + keyword,
+        method: "get",
+      })
+      .then((res: any) => {
+        callback(res.data as ResponseModel);
+      });
+  };
+  setCourseTags = ({
+    courseId,
+    tags,
+    callback,
+  }: {
+    courseId: number;
+    tags: string[];
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        data: { courseId: courseId, tags: tags },
+        url: "course/SetTags",
+        method: "post",
+      })
+      .then((res: any) => {
         callback(res.data as ResponseModel);
       });
   };

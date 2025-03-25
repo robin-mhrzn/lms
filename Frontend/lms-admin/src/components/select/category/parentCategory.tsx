@@ -5,6 +5,7 @@ import { useEffect, useMemo } from "react";
 import { fetchParentCategories } from "../../../redux/reducer/categoryReducer";
 export interface ParentCategoryProps {
   onChange?: (value: number) => void;
+  value?: number;
 }
 const ParentCategory: React.FC<ParentCategoryProps> = (props) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +24,7 @@ const ParentCategory: React.FC<ParentCategoryProps> = (props) => {
 
   return (
     <Select
+      value={props.value}
       onChange={props.onChange}
       showSearch
       placeholder="Select a category"

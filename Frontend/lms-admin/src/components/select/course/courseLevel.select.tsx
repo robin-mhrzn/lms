@@ -5,6 +5,7 @@ import { useEffect, useMemo } from "react";
 import { fetchCourseLevel } from "../../../redux/reducer/courseLevelReducer";
 export interface CourseLevelSelectProps {
   onChange?: (value: number) => void;
+  value?: number;
 }
 const CourseLevelSelect: React.FC<CourseLevelSelectProps> = (props) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +24,7 @@ const CourseLevelSelect: React.FC<CourseLevelSelectProps> = (props) => {
 
   return (
     <Select
+      value={props.value}
       onChange={props.onChange}
       showSearch
       placeholder="Select a category"

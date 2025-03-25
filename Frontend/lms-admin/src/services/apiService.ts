@@ -1,5 +1,4 @@
 import axios from "axios";
-import { logout } from "../redux/reducer/authReducer";
 import { showMessage } from "../utils/commonUtil";
 import { AuthHelper } from "../utils/authHelper";
 export interface ResponseModel {
@@ -66,8 +65,8 @@ export class APIService {
             false,
             "You are logged out from system. Please login again"
           );
-          localStorage.clear();
-          location.href = "/";
+          //localStorage.clear();
+          //location.href = "/";
         } else {
           showMessage(
             false,

@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Modal, Select, Space } from "antd";
+import { Button, Form, Input, InputNumber, Modal, Space } from "antd";
 import React, { useState } from "react";
 import { CourseModel } from "../../services/courseService/courseService";
 import ParentCategory from "../select/category/parentCategory";
@@ -20,7 +20,7 @@ const AddCourseComponent: React.FC<AddCourseComponentProps> = (props) => {
 
   const [form] = Form.useForm();
   const [parentCategoryId, setParentCategoryId] = useState<number>(0);
-  const handleFormChange = (changedValues: any, allValues: any) => {
+  const handleFormChange = (changedValues: any) => {
     if (changedValues.parentCategoryId) {
       setParentCategoryId(changedValues.parentCategoryId);
       form.setFieldsValue({ categoryId: null });
@@ -113,4 +113,4 @@ const AddCourseComponent: React.FC<AddCourseComponentProps> = (props) => {
     </Modal>
   );
 };
-export default AddCourseComponent;
+export default React.memo(AddCourseComponent);

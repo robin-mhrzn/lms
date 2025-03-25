@@ -11,6 +11,7 @@ namespace API.Course.Model
         public string? Description { get; set; } = string.Empty;
         [Required(ErrorMessage ="Category is required")]
         public int CategoryId { get; set; }
+        public int? ParentCategoryId { get; set; }
 
         [Required(ErrorMessage = "Level is required")]
         public int LevelId { get; set; }
@@ -34,5 +35,11 @@ namespace API.Course.Model
     {
         public int CourseId { get; set; }
         public bool IsPublished { get; set; }
+    }
+
+    public class CourseTagsModel
+    {
+        public int CourseId { get; set; }
+        public string[] Tags { get; set; } = [];
     }
 }

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Form, Input, Button, message } from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { Form, Input, Button } from "antd";
+import { LockOutlined } from "@ant-design/icons";
 import {
   IChangePasswordModel,
   UserService,
@@ -17,7 +17,9 @@ const ChangePasswordComponent = () => {
       data: values,
       successCallback: (res: ResponseModel) => {
         setLoading(false);
-        form.resetFields();
+        if (res.success) {
+          form.resetFields();
+        }
       },
     });
   };

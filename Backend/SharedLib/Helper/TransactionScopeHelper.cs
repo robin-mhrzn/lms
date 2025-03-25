@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Transactions;
 
 public static class TransactionScopeHelper
 {
-    public static void Execute(Action action,
+    public static async Task ExecuteAsync(Func<Task> action,
         TransactionScopeOption scopeOption = TransactionScopeOption.Required,
         IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
         int timeoutSeconds = 30)
@@ -16,12 +17,12 @@ public static class TransactionScopeHelper
 
         using (var scope = new TransactionScope(scopeOption, transactionOptions, TransactionScopeAsyncFlowOption.Enabled))
         {
-            action(); 
-            scope.Complete(); 
+            await action();
+            scope.Complete();
         }
     }
 
-    public static void Execute<T>(Func<T> function,
+    public static async Task<T> ExecuteAsync<T>(Func<Task<T>> function,
         TransactionScopeOption scopeOption = TransactionScopeOption.Required,
         IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
         int timeoutSeconds = 30)
@@ -34,8 +35,9 @@ public static class TransactionScopeHelper
 
         using (var scope = new TransactionScope(scopeOption, transactionOptions, TransactionScopeAsyncFlowOption.Enabled))
         {
-            T result = function();
+            T result = await function();
             scope.Complete();
+            return result;
         }
     }
 }

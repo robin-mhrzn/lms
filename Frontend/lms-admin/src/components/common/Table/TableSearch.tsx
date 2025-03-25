@@ -9,8 +9,8 @@ interface TableSearchProps<T> {
 }
 
 const TableSearch = <T extends object>({ dataIndex }: TableSearchProps<T>) => {
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState<keyof T | "">("");
+  const [, setSearchText] = useState("");
+  const [, setSearchedColumn] = useState<keyof T | "">("");
   const searchInput = useRef<InputRef>(null);
 
   const handleSearch = (

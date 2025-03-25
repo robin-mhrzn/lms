@@ -3,6 +3,7 @@ export const PATHS = {
   DASHBOARD: "/admin",
   CATEGORY: "/admin/category",
   COURSELIST: "/admin/course/list",
+  COURSEDETAIL: "/admin/course/detail",
   SETTINGS: "/settings",
   USERS: "/users",
   REPORTS: "/reports",

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Table, TableColumnsType, TableProps } from "antd";
+import { Button, Space, Table, TableColumnsType, TableProps } from "antd";
 import AddCourseComponent, {
   AddCourseComponentProps,
 } from "../../components/course/addCourse.Component";
@@ -12,6 +12,8 @@ import {
 import { ResponseModel } from "../../services/apiService";
 import { showMessage } from "../../utils/commonUtil";
 import TableSearch from "../../components/common/Table/TableSearch";
+import { useNavigate } from "react-router-dom";
+import { PATHS } from "../../utils/Navigation";
 
 type OnChange = NonNullable<TableProps<ICourseListModel>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
@@ -19,6 +21,7 @@ type GetSingle<T> = T extends (infer U)[] ? U : never;
 type Sorts = GetSingle<Parameters<OnChange>[2]>;
 
 const CourseList = () => {
+  const navigate = useNavigate();
   const courseService = new CourseService();
   const [addCourse, setAddCourse] = useState<AddCourseComponentProps>({
     isModalOpen: false,
@@ -98,8 +101,30 @@ const CourseList = () => {
         },
       ],
     },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <Space>
+          <Button type="primary" onClick={() => handleEdit(record)}>
+            Edit
+          </Button>
+          <Button
+            type="primary"
+            danger
+            onClick={() => {
+              //handleDelete(record.categoryId);
+            }}
+          >
+            Delete
+          </Button>
+        </Space>
+      ),
+    },
   ];
-
+  const handleEdit = (model: ICourseListModel) => {
+    navigate(PATHS.COURSEDETAIL + "/" + model.courseId);
+  };
   const handleModalClose = () => {
     setAddCourse({ ...addCourse, isModalOpen: false });
   };
@@ -142,9 +167,13 @@ const CourseList = () => {
     if (filters && Object.keys(filters).length > 0) {
       Object.keys(filters).forEach((key) => {
         if ((filters[key] ?? []).length > 0) {
+          let filterValue = String(filters[key]?.[0] ?? "");
+          if ((filters[key]?.length ?? 0) > 1 && key === "isPublished") {
+            filterValue = "";
+          }
           updatePagination.filters.push({
             fieldName: key,
-            fieldValue: String(filters[key]?.[0] ?? ""),
+            fieldValue: filterValue,
           });
         }
       });

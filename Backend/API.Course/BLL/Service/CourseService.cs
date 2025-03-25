@@ -32,7 +32,7 @@ namespace API.Course.BLL.Service
                                select new LanguageModel
                                {
                                    LanguageId = l.LanguageId,
-                                   Name= l.Name,
+                                   Name = l.Name,
                                }).AsNoTracking().ToListAsync();
             return new ResponseModel(true, "success", query);
         }
@@ -48,8 +48,8 @@ namespace API.Course.BLL.Service
                              CategoryName = cat.Name,
                              CourseId = c.CourseId,
                              IsPublished = c.IsPublished,
-                             Language=l.Name,
-                             Level=l.Name,
+                             Language = l.Name,
+                             Level = l.Name,
                              Name = c.Title,
                              ParentCategoryName = pcat.Name,
                              Price = c.Price
@@ -120,16 +120,16 @@ namespace API.Course.BLL.Service
         public async Task<ResponseModel> SaveCourse(int userId, CourseModel model)
         {
             if (model.CourseId == 0)
-            
+
             {
                 var course = new DAL.Context.Course
                 {
                     Title = model.Title,
                     CategoryId = model.CategoryId,
-                    LevelId=model.LevelId,
+                    LevelId = model.LevelId,
                     Description = model.Description,
                     Duration = model.Duration,
-                    LanguageId=model.LanguageId,
+                    LanguageId = model.LanguageId,
                     CreatedBy = userId,
                     CreatedDate = DateTime.UtcNow,
                     IsPublished = false,
@@ -150,18 +150,40 @@ namespace API.Course.BLL.Service
                 }
                 courseEntity.Title = model.Title;
                 courseEntity.CategoryId = model.CategoryId;
-                //courseEntity.CourseLevel = model.CourseLevel;
                 courseEntity.Description = model.Description;
                 courseEntity.Duration = model.Duration;
                 courseEntity.IsPublished = false;
-                // courseEntity.ThumbnailImageUrl = model.ThumbnailImageUrl;
-                // courseEntity.Language = model.Language;
+                courseEntity.LevelId = model.LevelId;
+                courseEntity.LanguageId = model.LanguageId;
                 courseEntity.ModifiedBy = userId;
                 courseEntity.ModifiedDate = DateTime.UtcNow;
                 _context.Courses.Update(courseEntity);
                 await _context.SaveChangesAsync();
             }
             return new ResponseModel(true, "Course saved successfully");
+        }
+
+
+        public async Task<ResponseModel> GetById(int courseId)
+        {
+            var course = await (from c in _context.Courses.Where(a => a.CourseId == courseId)
+                                join cat in _context.Categories
+                                on c.CategoryId equals cat.CategoryId
+                                select new
+                                {
+                                    CategoryId = c.CategoryId,
+                                    CourseId = c.CourseId,
+                                    Description = c.Description,
+                                    Duration = c.Duration,
+                                    LanguageId = c.LanguageId,
+                                    LevelId = c.LevelId,
+                                    Title = c.Title,
+                                    ParentCategoryId = cat.ParentId,
+                                    BasePrice = c.BasePrice,
+                                    Price = c.Price,
+                                    Tags = c.CourseTags.Select(a => a.Tags.Name).ToList()
+                                }).FirstOrDefaultAsync();
+            return new ResponseModel(true, "success", course);
         }
 
         public async Task<ResponseModel> PublishCourse(int userId, CoursePublishModel model)
@@ -171,12 +193,12 @@ namespace API.Course.BLL.Service
             {
                 return new ResponseModel(false, "Course not available. Please check it again");
             }
-            courseEntity.IsPublished = true;
+            courseEntity.IsPublished = model.IsPublished;
             courseEntity.ModifiedBy = userId;
             courseEntity.ModifiedDate = DateTime.UtcNow;
             _context.Courses.Update(courseEntity);
             await _context.SaveChangesAsync();
-            return new ResponseModel(false, model.IsPublished ? "Course published successfully" : "Course unpublished successfully");
+            return new ResponseModel(true, model.IsPublished ? "Course published successfully" : "Course unpublished successfully");
         }
 
         public async Task<ResponseModel> SetPricing(int userId, CoursePricingModel model)
@@ -191,6 +213,60 @@ namespace API.Course.BLL.Service
             _context.Courses.Update(courseEntity);
             await _context.SaveChangesAsync();
             return new ResponseModel(true, "Price set successfully for the course");
+        }
+
+        public async Task<ResponseModel> GetTags(string keyword)
+        {
+            var tags = await (from t in _context.Tags.Where(a => a.Name.Contains(keyword))
+                              select t.Name).Take(10).ToArrayAsync();
+            return new ResponseModel(true, "Success", tags);
+        }
+
+
+        public async Task<ResponseModel> SetTags(int courseId, string[] tags)
+        {
+            return await TransactionScopeHelper.ExecuteAsync(async () =>
+            {
+                var tagsTobeAdded = (from t in tags
+                                     join dbTag in _context.Tags
+                                     on t equals dbTag.Name into tagGroup
+                                     from tg in tagGroup.DefaultIfEmpty()
+                                     where tg == null || tg.Name == null
+                                     select new Tag
+                                     {
+                                         Name = t
+                                     }).ToList();
+                _context.Tags.AddRange(tagsTobeAdded);
+                _context.SaveChanges();
+                var tagIds = _context.Tags
+                                           .Where(a => tags.Contains(a.Name))
+                                           .Select(a => a.TagsId)
+                                           .ToList();
+                var existingCourseTagIds = _context.CourseTags
+                                                         .Where(ct => ct.CourseId == courseId)
+                                                         .Select(ct => ct.TagsId)
+                                                         .ToList();
+                var tagsToRemove = existingCourseTagIds.Except(tagIds)
+                                                       .Select(tagId => new CourseTag { CourseId = courseId, TagsId = tagId })
+                                                       .ToList();
+                if (tagsToRemove.Any())
+                {
+                    _context.CourseTags.RemoveRange(_context.CourseTags.Where(ct => tagsToRemove.Select(t => t.TagsId).Contains(ct.TagsId) && ct.CourseId == courseId));
+                }
+                var newCourseTags = tagIds.Except(existingCourseTagIds)
+                                          .Select(tagId => new CourseTag
+                                          {
+                                              CourseId = courseId,
+                                              TagsId = tagId
+                                          }).ToList();
+                if (newCourseTags.Any())
+                {
+                    _context.CourseTags.AddRange(newCourseTags);
+                }
+                _context.SaveChanges();
+                return new ResponseModel(true, "Tags set successfully");
+            });
+
         }
     }
 }
