@@ -23,17 +23,20 @@ const CoursePricingComponent: React.FC<CoursePricingComponentProps> = (
   const handleSetPricing = useCallback(
     (model: CoursePricingComponentProps) => {
       setLoading(true);
-      courseService.setCoursePricing({
-        courseId: model.courseId,
-        basePrice: model.basePrice,
-        price: model.price,
-        callback: (res?: ResponseModel) => {
-          setLoading(false);
-          if (res?.success) {
-            showMessage(true, res.message);
-          }
-        },
-      });
+      try {
+        courseService.setCoursePricing({
+          courseId: model.courseId,
+          basePrice: model.basePrice,
+          price: model.price,
+          callback: (res?: ResponseModel) => {
+            if (res?.success) {
+              showMessage(true, res.message);
+            }
+          },
+        });
+      } finally {
+        setLoading(false);
+      }
     },
     [courseService]
   );

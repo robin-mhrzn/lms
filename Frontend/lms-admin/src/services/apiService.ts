@@ -65,8 +65,8 @@ export class APIService {
             false,
             "You are logged out from system. Please login again"
           );
-          //localStorage.clear();
-          //location.href = "/";
+          localStorage.clear();
+          location.href = "/";
         } else {
           showMessage(
             false,

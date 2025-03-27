@@ -1,48 +1,53 @@
 import { Button, Form, Input, InputNumber, Modal, Space } from "antd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CourseModel } from "../../services/courseService/courseService";
 import ParentCategory from "../select/category/parentCategory";
 import ChildCategory from "../select/category/childCategory";
 import CourseLevelSelect from "../select/course/courseLevel.select";
 import CourseLanguageSelect from "../select/course/courseLanguage.select";
+
 export interface AddCourseComponentProps {
   isModalOpen: boolean;
   handleCancel?: () => void;
   handleAddCourse?: (model: CourseModel) => void;
   loader: boolean;
 }
-const AddCourseComponent: React.FC<AddCourseComponentProps> = (props) => {
-  const handleAddCourse = (model: CourseModel) => {
-    if (props.handleAddCourse) {
-      props.handleAddCourse(model);
-    }
-  };
 
+const AddCourseComponent: React.FC<AddCourseComponentProps> = ({
+  isModalOpen,
+  handleCancel,
+  handleAddCourse,
+  loader,
+}) => {
   const [form] = Form.useForm();
   const [parentCategoryId, setParentCategoryId] = useState<number>(0);
+
+  useEffect(() => {
+    form.setFieldsValue({ categoryId: null });
+  }, [parentCategoryId, form]);
+
   const handleFormChange = (changedValues: any) => {
     if (changedValues.parentCategoryId) {
       setParentCategoryId(changedValues.parentCategoryId);
-      form.setFieldsValue({ categoryId: null });
     }
   };
 
   return (
     <Modal
       title="Add Course"
-      open={props.isModalOpen}
-      onCancel={props.handleCancel}
+      open={isModalOpen}
+      onCancel={handleCancel}
       footer={
         <div className="flex justify-end space-x-3 border-t border-gray-200 pt-3">
           <Space>
-            <Button onClick={props.handleCancel} className="rounded-lg">
+            <Button onClick={handleCancel} className="rounded-lg">
               Cancel
             </Button>
             <Button
               type="primary"
               onClick={() => form.submit()}
               className="rounded-lg"
-              loading={props.loader}
+              loading={loader}
             >
               Submit
             </Button>
@@ -71,19 +76,17 @@ const AddCourseComponent: React.FC<AddCourseComponentProps> = (props) => {
         <Form.Item
           label="Parent Category"
           name="parentCategoryId"
-          rules={[
-            { required: true, message: "Please enter Parent Category ID" },
-          ]}
+          rules={[{ required: true, message: "Please select Parent Category" }]}
         >
-          <ParentCategory></ParentCategory>
+          <ParentCategory />
         </Form.Item>
 
         <Form.Item
           label="Category"
           name="categoryId"
-          rules={[{ required: true, message: "Please enter Category ID" }]}
+          rules={[{ required: true, message: "Please select Category" }]}
         >
-          <ChildCategory parentCategoryId={parentCategoryId}></ChildCategory>
+          <ChildCategory parentCategoryId={parentCategoryId} />
         </Form.Item>
 
         <Form.Item
@@ -91,11 +94,11 @@ const AddCourseComponent: React.FC<AddCourseComponentProps> = (props) => {
           name="levelId"
           rules={[{ required: true, message: "Please select Course Level" }]}
         >
-          <CourseLevelSelect></CourseLevelSelect>
+          <CourseLevelSelect />
         </Form.Item>
 
         <Form.Item
-          label="Duration (in hours)"
+          label="Duration (minutes)"
           name="duration"
           rules={[{ required: true, message: "Please enter Duration" }]}
         >
@@ -105,12 +108,13 @@ const AddCourseComponent: React.FC<AddCourseComponentProps> = (props) => {
         <Form.Item
           label="Language"
           name="languageId"
-          rules={[{ required: true, message: "Please enter Language" }]}
+          rules={[{ required: true, message: "Please select Language" }]}
         >
-          <CourseLanguageSelect></CourseLanguageSelect>
+          <CourseLanguageSelect />
         </Form.Item>
       </Form>
     </Modal>
   );
 };
+
 export default React.memo(AddCourseComponent);

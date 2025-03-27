@@ -17,8 +17,7 @@ type CourseDetailProps = {
 
 const CourseDetailComponent: React.FC<CourseDetailProps> = ({ courseData }) => {
   const courseService = useMemo(() => new CourseService(), []);
-
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [parentCategoryId, setParentCategoryId] = useState<number>(
     courseData?.parentCategoryId || 0
   );
@@ -39,18 +38,24 @@ const CourseDetailComponent: React.FC<CourseDetailProps> = ({ courseData }) => {
     [form]
   );
 
-  const handleSaveCourse = useCallback((model: CourseModel) => {
-    setloading(true);
-    courseService.saveCourse({
-      data: model,
-      callback: (res?: ResponseModel) => {
-        if (res?.success) {
-          showMessage(true, "Record saved successfully");
-        }
-        setloading(false);
-      },
-    });
-  }, []);
+  const handleSaveCourse = useCallback(
+    async (model: CourseModel) => {
+      setLoading(true);
+      try {
+        await courseService.saveCourse({
+          data: model,
+          callback: (res?: ResponseModel) => {
+            if (res?.success) {
+              showMessage(true, "Record saved successfully");
+            }
+          },
+        });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [courseService]
+  );
 
   return (
     <Card title="Course Detail" className="shadow-lg rounded-2xl">
@@ -133,7 +138,7 @@ const CourseDetailComponent: React.FC<CourseDetailProps> = ({ courseData }) => {
           </Col>
           <Col span={24}>
             <Form.Item name="courseId" hidden>
-              <Input type="hidden"></Input>
+              <Input type="hidden" />
             </Form.Item>
 
             <Form.Item>

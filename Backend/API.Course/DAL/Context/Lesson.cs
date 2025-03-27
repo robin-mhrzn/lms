@@ -17,5 +17,7 @@ public partial class Lesson
 
     public int Position { get; set; }
 
+    public string VideoUrl { get; set; } = null!;
+
     public virtual Module Module { get; set; } = null!;
 }

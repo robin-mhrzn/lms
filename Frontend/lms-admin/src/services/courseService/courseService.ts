@@ -32,6 +32,10 @@ export class CourseModel {
   basePrice: number;
   price: number;
   tags: string[];
+  thumbnailImageUrl: string;
+  isPublished: boolean;
+  courseAdditional: ICourseAdditional[];
+  courseAdditionalTypes: ICourseAdditionalType[];
   constructor() {
     this.courseId = 0;
     this.title = "";
@@ -44,16 +48,51 @@ export class CourseModel {
     this.basePrice = 0;
     this.price = 0;
     this.tags = [];
+    this.thumbnailImageUrl = "";
+    this.isPublished = false;
+    this.courseAdditional = [];
+    this.courseAdditionalTypes = [];
   }
 }
+export interface ICourseAdditionalType {
+  courseAdditionalTypeId: number;
+  additionalType: string;
+}
+export interface ICourseAdditional {
+  courseAdditionalTypeId: number;
+  courseAdditionalId: number;
+  description: string;
+  courseId: number;
+}
 export interface ICourseListRequestModel extends IPaginationModel {}
+
+export interface IModuleListModel {
+  moduleId: number;
+  name: string;
+  description: string;
+  lessons: number;
+  duration: number;
+}
+export interface IModuleModel {
+  title: string;
+  moduleId: number;
+  description: string;
+  courseId: number;
+  lessons: ILessonModule[];
+}
+export interface ILessonModule {
+  description: string;
+  duration: number;
+  lessonId: number;
+  title: string;
+  videoUrl: string;
+}
 
 export class CourseService {
   private readonly apiService: APIService;
   constructor() {
     this.apiService = new APIService();
   }
-
   getCourseLevel = ({
     callback,
   }: {
@@ -213,6 +252,168 @@ export class CourseService {
       })
       .then((res: any) => {
         callback(res.data as ResponseModel);
+      });
+  };
+  getModuleByCourse = ({
+    id,
+    callback,
+  }: {
+    id: number;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/Module?courseId=" + id,
+        method: "get",
+      })
+      .then((res: any) => {
+        callback(res?.data as ResponseModel);
+      });
+  };
+  saveModule = ({
+    data,
+    callback,
+  }: {
+    data: IModuleModel;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/AddModule",
+        method: "post",
+        data: data,
+      })
+      .then((res: any) => {
+        callback(res?.data as ResponseModel);
+      });
+  };
+  getModuleById = ({
+    moduleId,
+    callback,
+  }: {
+    moduleId: number;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/GetByModule/?moduleId=" + moduleId,
+        method: "get",
+      })
+      .then((res: any) => {
+        callback(res?.data as ResponseModel);
+      });
+  };
+  deleteModule = ({
+    moduleId,
+    callback,
+  }: {
+    moduleId: number;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/deleteModule/?moduleId=" + moduleId,
+        method: "Delete",
+      })
+      .then((res: any) => {
+        callback(res?.data as ResponseModel);
+      });
+  };
+  sortModule = ({
+    courseId,
+    moduleId,
+    callback,
+  }: {
+    courseId: number;
+    moduleId: number[];
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/sortModule",
+        method: "post",
+        data: { courseId: courseId, moduleId: moduleId },
+      })
+      .then((res: any) => {
+        callback(res?.data as ResponseModel);
+      });
+  };
+
+  sortLesson = ({
+    moduleId,
+    lessonId,
+    callback,
+  }: {
+    moduleId: number;
+    lessonId: number[];
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/sortLesson",
+        method: "post",
+        data: { moduleId: moduleId, lessonId: lessonId },
+      })
+      .then((res: any) => {
+        callback(res?.data as ResponseModel);
+      });
+  };
+  setCourseThumbnail = ({
+    courseId,
+    thumbnailUrl,
+    callback,
+  }: {
+    courseId: number;
+    thumbnailUrl: string;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/setCourseThumbnail",
+        data: { courseId: courseId, thumbnailUrl: thumbnailUrl },
+        method: "POST",
+      })
+      .then((res: any) => {
+        callback(res?.data as ResponseModel);
+      });
+  };
+  saveCourseAdditional = ({
+    data,
+    callback,
+  }: {
+    data: ICourseAdditional;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/SetCourseAdditional",
+        data: data,
+        method: "POST",
+      })
+      .then((res: any) => {
+        debugger;
+        if (res?.data?.success == true) {
+          callback(res?.data as ResponseModel);
+        }
+      });
+  };
+  deleteCourseAdditional = ({
+    id,
+    callback,
+  }: {
+    id: number;
+    callback: (res?: ResponseModel) => void;
+  }) => {
+    this.apiService
+      .callApi({
+        url: "course/DeleteCourseAdditional",
+        data: { id: id },
+        method: "DELETE",
+      })
+      .then((res: any) => {
+        if (res?.data?.success == true) {
+          callback(res?.data as ResponseModel);
+        }
       });
   };
 }

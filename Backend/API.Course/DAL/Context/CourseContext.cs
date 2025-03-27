@@ -149,9 +149,11 @@ public partial class CourseContext : DbContext
         {
             entity.ToTable("Lesson");
 
-            entity.Property(e => e.LessonId).ValueGeneratedNever();
             entity.Property(e => e.Description).IsUnicode(false);
             entity.Property(e => e.Title)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.VideoUrl)
                 .HasMaxLength(200)
                 .IsUnicode(false);
 
@@ -174,7 +176,6 @@ public partial class CourseContext : DbContext
         {
             entity.ToTable("Module");
 
-            entity.Property(e => e.ModuleId).ValueGeneratedNever();
             entity.Property(e => e.Description).IsUnicode(false);
             entity.Property(e => e.Title)
                 .HasMaxLength(200)

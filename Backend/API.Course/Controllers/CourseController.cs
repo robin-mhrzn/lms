@@ -62,11 +62,62 @@ namespace API.Course.Controllers
         }
 
         [HttpPost("SetTags")]
-        public async Task<IActionResult> SetTags([FromBody]CourseTagsModel model)
+        public async Task<IActionResult> SetTags([FromBody] CourseTagsModel model)
         {
             return Ok(await _courseService.SetTags(model.CourseId, model.Tags));
         }
 
+        [HttpGet("Module")]
+        public async Task<IActionResult> Module([FromQuery]int courseId)
+        {
+            return Ok(await _courseService.GetModuleByCourse(courseId));
+        }
 
+        [HttpGet("GetByModule")]
+        public async Task<IActionResult> GetByModule([FromQuery] int moduleId)
+        {
+            return Ok(await _courseService.GetByModuleId(moduleId));    
+        }
+
+        [HttpPost("AddModule")]
+        public async Task<IActionResult> SaveModule([FromBody] ModuleModel model)
+        {
+            return Ok(await _courseService.SaveModule(UserId, model));
+        }
+
+        [HttpDelete("DeleteModule")]
+        public async Task<IActionResult> DeleteModule([FromQuery]int moduleId )
+        {
+            return Ok(await _courseService.DeleteModule(moduleId));
+        }
+
+        [HttpPost("SortModule")]
+        public async Task<IActionResult> SortModule([FromBody] SortModuleModel model)
+        {
+            return Ok(await _courseService.SortModule(model));
+        }
+        [HttpPost("SortLesson")]
+        public async Task<IActionResult> SortLesson([FromBody] SortLessonModel model)
+        {
+            return Ok(await _courseService.SortLesson(model));
+        }
+
+        [HttpPost("setCourseThumbnail")]
+        public async Task<IActionResult> SetThumbnail([FromBody]CourseThumbnailModel model)
+        {
+            return Ok(await _courseService.SetCourseThumbnail(model));
+        }
+
+        [HttpPost("SetCourseAdditional")]
+        public async Task<IActionResult> SetCourseAdditional([FromBody] CourseAdditionalItemModel model)
+        {
+            return Ok(await _courseService.SetAdditionalCourse(model)); 
+        }
+
+        [HttpDelete("DeleteCourseAdditional")]
+        public async Task<IActionResult> DeleteCourseAdditional([FromBody] CourseAdditionalDeleteModel model)
+        {
+            return Ok(await _courseService.DeleteAdditionalCourse(model.id));
+        }
     }
 }

@@ -2,9 +2,10 @@ import { Button, Card, Form, Input, Select } from "antd";
 import { CourseService } from "../../services/courseService/courseService";
 import { ResponseModel } from "../../services/apiService";
 import { showMessage } from "../../utils/commonUtil";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import React from "react";
+
 interface TagsCourseComponentProps {
   courseId: number;
   tags: string[];
@@ -16,13 +17,13 @@ const TagsCourseComponent: React.FC<TagsCourseComponentProps> = ({
 }) => {
   const [loader, setLoader] = useState(false);
   const [form] = Form.useForm();
-
-  const courseService = useMemo(() => new CourseService(), []);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
+  const courseService = new CourseService();
+
   useEffect(() => {
-    form.setFieldValue("tags", tags);
-  }, [tags]);
+    form.setFieldsValue({ tags });
+  }, [tags, form]);
 
   const handleSearch = useCallback(
     debounce((value: string) => {
@@ -31,28 +32,27 @@ const TagsCourseComponent: React.FC<TagsCourseComponentProps> = ({
         keyword: value,
         callback: (res?: ResponseModel) => {
           if (res?.success) {
-            setSuggestions((prevSuggestions) =>
-              JSON.stringify(prevSuggestions) === JSON.stringify(res.data)
-                ? prevSuggestions
-                : (res.data as string[])
-            );
+            setSuggestions(res.data as string[]);
           }
         },
       });
     }, 500),
-    [courseService]
+    []
   );
+
   const handleSaveTags = useCallback(
-    (model: any) => {
+    (model: { tags: string[] }) => {
       setLoader(true);
       courseService.setCourseTags({
         courseId,
         tags: model.tags,
         callback: (res?: ResponseModel) => {
+          setLoader(false);
           if (res?.success) {
             showMessage(true, "Tags set successfully");
+          } else {
+            showMessage(false, "Failed to set tags");
           }
-          setLoader(false);
         },
       });
     },
@@ -78,7 +78,7 @@ const TagsCourseComponent: React.FC<TagsCourseComponentProps> = ({
             options={suggestions.map((tag) => ({ value: tag }))}
           />
         </Form.Item>
-        <Form.Item hidden name={"courseId"}>
+        <Form.Item hidden name="courseId">
           <Input type="hidden" />
         </Form.Item>
         <Form.Item>

@@ -15,6 +15,15 @@ namespace API.Course.BLL.IService
 
         Task<ResponseModel> GetTags(string keyword);
         Task<ResponseModel> SetTags(int courseId, string[] tags);
+        Task<ResponseModel> GetModuleByCourse(int courseId);
+        Task<ResponseModel> GetByModuleId(int moduleId);
+         Task<ResponseModel> SaveModule(int userId,ModuleModel model);
+        Task<ResponseModel> DeleteModule(int moduleId);
+        Task<ResponseModel> SortModule(SortModuleModel model);
+        Task<ResponseModel> SortLesson(SortLessonModel model);
+        Task<ResponseModel> SetCourseThumbnail(CourseThumbnailModel model);
+        Task<ResponseModel> SetAdditionalCourse(CourseAdditionalItemModel model);
+        Task<ResponseModel> DeleteAdditionalCourse(int id);
     }
 
 }

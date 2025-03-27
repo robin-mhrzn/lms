@@ -10,6 +10,9 @@ import { Col, Row } from "antd";
 import PublishCourseComponent from "../../components/course/publishCourse.Component";
 import CoursePricingComponent from "../../components/course/coursePricing.Component";
 import TagsCourseComponent from "../../components/course/tagsCourse.Component";
+import ModuleListComponent from "../../components/course/moduleList.Component";
+import CourseThumbnailComponent from "../../components/course/courseThumbnail.Component";
+import CourseAdditionalComponent from "../../components/course/courseAdditional.Component";
 
 const CourseDetail = () => {
   const courseService = new CourseService();
@@ -30,23 +33,42 @@ const CourseDetail = () => {
     <div className="min-h-screen">
       <Row gutter={[24, 24]}>
         <Col span={16}>
-          <CourseDetailComponent
-            courseData={courseData}
-          ></CourseDetailComponent>
+          <div className="mb-4">
+            <CourseDetailComponent
+              courseData={courseData}
+            ></CourseDetailComponent>
+          </div>
+          <ModuleListComponent
+            courseId={Number(courseId ?? 0)}
+          ></ModuleListComponent>
         </Col>
         <Col span={8}>
-          <PublishCourseComponent
-            courseId={Number(courseId ?? 0)}
-          ></PublishCourseComponent>
-          <CoursePricingComponent
-            courseId={courseData.courseId}
-            basePrice={courseData.basePrice}
-            price={courseData.price}
-          ></CoursePricingComponent>
-          <TagsCourseComponent
-            courseId={Number(courseId ?? 0)}
-            tags={courseData.tags}
-          ></TagsCourseComponent>
+          <div className="mb-4!">
+            <PublishCourseComponent
+              isPublished={courseData.isPublished}
+              courseId={Number(courseId ?? 0)}
+            ></PublishCourseComponent>
+          </div>
+          <div className="mb-4!">
+            <CoursePricingComponent
+              courseId={courseData.courseId}
+              basePrice={courseData.basePrice}
+              price={courseData.price}
+            ></CoursePricingComponent>
+          </div>
+          <div className="mb-4!">
+            <TagsCourseComponent
+              courseId={Number(courseId ?? 0)}
+              tags={courseData.tags}
+            ></TagsCourseComponent>
+          </div>
+          <div className="mb-4!">
+            <CourseThumbnailComponent
+              courseId={Number(courseId ?? 0)}
+              thumbnailImage={courseData.thumbnailImageUrl}
+            ></CourseThumbnailComponent>
+          </div>
+
           {/* <Card
             title="Set Course Pricing"
             className="shadow-lg rounded-2xl text-center p-6 mt-6"
@@ -133,6 +155,13 @@ const CourseDetail = () => {
           </Card> */}
         </Col>
       </Row>
+      <div className="mt-4">
+        <CourseAdditionalComponent
+          courseId={Number(courseId ?? 0)}
+          courseAdditional={courseData.courseAdditional}
+          courseAdditionalType={courseData.courseAdditionalTypes}
+        ></CourseAdditionalComponent>
+      </div>
     </div>
   );
 };
