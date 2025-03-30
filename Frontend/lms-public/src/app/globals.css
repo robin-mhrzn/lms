@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-primary: oklch(0.65 0.18 259);
+  --color-secondary: oklch(0.35 0.15 259);
+  --color-grey: oklch(0.45 0.02 240);
+  --color-slateGray: oklch(0.95 0.01 240);
+  --color-deepSlate: oklch(0.85 0.05 240);
+  --color-success: oklch(0.75 0.25 145);
+  --color-midnight-text: oklch(0.15 0.02 240);
+
+  --shadow-input: 0 63px 59px oklch(0.65 0.18 259 / 0.1);
+  --shadow-course: 0 40px 20px oklch(0 0 0 / 0.15);
+  --shadow-testimonial1: 0 5.54348px 11.087px oklch(0.45 0.02 240 / 0.05);
+  --shadow-testimonial2: 5.54348px 38.8043px 110.87px
+    oklch(0.45 0.02 240 / 0.15);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+section {
+  @apply py-20;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.slick-dots {
+  color: #1a21bc;
+}
+
+.slick-dots li.slick-active button:before {
+  opacity: 1;
+  color: #1a21bc !important;
+}
+
+.slick-dots li button:before {
+  font-size: 11px !important;
+}
+
+.shadow-input {
+  box-shadow: var(--shadow-input);
+}
+
+.shadow-course {
+  box-shadow: var(--shadow-course);
+}
+
+.shadow-testimonial1 {
+  box-shadow: var(--shadow-testimonial1);
+}
+
+.shadow-testimonial2 {
+  box-shadow: var(--shadow-testimonial2);
+}
+.bg-newsletter-bg {
+  background-image: url(/images/newsletter/bgFile.png);
+}
+.bg-deepSlate {
+  --tw-bg-opacity: 1;
+  background-color: rgb(213 239 250 / var(--tw-bg-opacity));
 }
