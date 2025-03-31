@@ -36,7 +36,6 @@ export class AuthService {
       method: "POST",
       data: { email: email, otp: code },
     });
-    debugger;
     if (response.success) {
       callback();
     } else {

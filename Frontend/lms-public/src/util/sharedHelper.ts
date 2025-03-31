@@ -86,3 +86,10 @@ export const convertJsonToFormData = (
   }
   return formData;
 };
+export const getImageUrl = (imageUrl?: string): string => {
+  const domain = "https://localhost:7272/uploads/";
+  if (!imageUrl) {
+    return "";
+  }
+  return imageUrl.startsWith("http") ? imageUrl : `${domain}${imageUrl}`;
+};

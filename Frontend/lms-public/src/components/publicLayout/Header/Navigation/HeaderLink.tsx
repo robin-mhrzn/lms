@@ -11,17 +11,16 @@ type HeaderItem = {
 
 const HeaderLink: React.FC<{ item: HeaderItem }> = ({ item }) => {
   const [submenuOpen, setSubmenuOpen] = useState(false);
-  const path = usePathname(); // Get the current path from Next.js router
+  const path = usePathname();
   const [isActive, setIsActive] = useState(false);
 
-  // Check if the current path matches the link or any submenu link
   useEffect(() => {
     const isLinkActive =
       (path === item.href ||
         (item.submenu &&
           item.submenu.some((subItem) => path === subItem.href))) ??
       false;
-    setIsActive(isLinkActive); // Ensure isLinkActive is always a boolean
+    setIsActive(isLinkActive);
   }, [path, item.href, item.submenu]);
 
   const handleMouseEnter = () => {
@@ -75,7 +74,7 @@ const HeaderLink: React.FC<{ item: HeaderItem }> = ({ item }) => {
           data-aos-duration="500"
         >
           {item.submenu?.map((subItem, index) => {
-            const isSubItemActive = path === subItem.href; // Check if the submenu item is active
+            const isSubItemActive = path === subItem.href;
             return (
               <Link
                 key={index}

@@ -22,6 +22,8 @@ builder.Services.AddDbContext<CourseContext>(options =>
 // Add Services
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ICourseService, CourseService>();
+builder.Services.AddTransient<IPublicCourseService, PublicCourseService>();
+
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<CustomValidationFilter>();

@@ -9,6 +9,7 @@ import MobileHeaderLink from "../Header/Navigation/MobileHeaderLink";
 import { useTheme } from "next-themes";
 import Logo from "./Logo";
 import { LogIn, UserPlus } from "lucide-react";
+import { NavigationRoute } from "@/util/navigation";
 
 const Header: React.FC = () => {
   const pathUrl = usePathname();
@@ -83,7 +84,7 @@ const Header: React.FC = () => {
           </nav>
           <div className="flex items-center gap-4">
             <Link
-              href="/signin"
+              href={NavigationRoute.LOGIN}
               className="hidden lg:flex items-center gap-2 bg-primary text-white hover:bg-primary/15 hover:text-primary px-16 py-5 rounded-full text-lg font-medium"
             >
               <LogIn className="w-5 h-5" /> {/* Sign In Icon */}
@@ -91,7 +92,7 @@ const Header: React.FC = () => {
             </Link>
 
             <Link
-              href="/signup"
+              href={NavigationRoute.REGISTER}
               className="hidden lg:flex items-center gap-2 bg-primary/15 hover:bg-primary text-primary hover:text-white px-16 py-5 rounded-full text-lg font-medium"
             >
               <UserPlus className="w-5 h-5" /> {/* Sign Up Icon */}

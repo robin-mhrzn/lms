@@ -10,8 +10,10 @@ import {
   Phone,
   Folder,
 } from "lucide-react";
+import { getCurrentYear } from "@/util/sharedHelper";
 
 const footer = () => {
+  const currentYear = getCurrentYear();
   return (
     <footer className=" bg-deepSlate py-10">
       <div className="container mx-auto lg:max-w-screen-xl md:max-w-screen-md px-4">
@@ -92,15 +94,7 @@ const footer = () => {
 
         <div className="mt-10 lg:flex items-center justify-between">
           <h4 className="text-black/50 text-sm text-center lg:text-start font-normal">
-            @2025 Agency. All Rights Reserved by{" "}
-            <Link
-              href="https://getnextjstemplates.com/"
-              target="_blank"
-              className="hover:text-primary"
-            >
-              {" "}
-              GetNextJsTemplates.com
-            </Link>
+            @{currentYear} All Rights Reserved
           </h4>
           <div className="flex gap-5 mt-5 lg:mt-0 justify-center lg:justify-start">
             <Link

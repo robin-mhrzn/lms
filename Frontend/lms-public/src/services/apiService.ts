@@ -12,10 +12,8 @@ interface ServiceTS {
   data?: any;
   method?: string;
 }
-
 export class APIService {
-  private api: string = " https://localhost:7279/api/"; //process.env.NEXT_PUBLIC_BASE_URL as string;
-
+  private api: string = " https://localhost:7259/api/"; //
   private authToken: string;
   private config: Params;
   constructor() {
@@ -48,21 +46,21 @@ export class APIService {
       },
     };
   };
+
   callApi = async ({ url, data, method }: ServiceTS): Promise<any> => {
     if (!this.authToken) {
       await this.init();
     }
+
     const options: RequestInit = {
-      method: method,
+      method: method || "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.authToken}`,
       },
     };
-    if (method == undefined) {
-      method = "POST";
-    }
-    if (["POST", "PUT", "PATCH"].includes(method)) {
+
+    if (["POST", "PUT", "PATCH"].includes(method || "POST")) {
       options.body = JSON.stringify(data);
     }
     const responseData = await (await fetch(this.api + url, options)).json();
