@@ -1,3 +1,5 @@
+import { NavigationRoute } from "@/util/navigation";
+
 export type SubmenuItem = {
   label: string;
   href: string;
@@ -9,9 +11,9 @@ export type HeaderItem = {
   submenu?: SubmenuItem[];
 };
 export const headerData: HeaderItem[] = [
-  { label: "Home", href: "/" },
-  { label: "Categories", href: "/category  " },
-  { label: "Courses", href: "/#courses  " },
+  { label: "Home", href: NavigationRoute.HOME },
+  { label: "Categories", href: NavigationRoute.CATEGORY },
+  { label: "Courses", href: NavigationRoute.COURSE },
   { label: "Mentor", href: "/#mentor" },
   { label: "Testimonial", href: "/#testimonial" },
 ];

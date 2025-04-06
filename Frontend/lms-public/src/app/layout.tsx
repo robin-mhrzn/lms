@@ -7,6 +7,8 @@ import Header from "@/components/publicLayout/Header";
 import Footer from "@/components/publicLayout/Footer";
 import ScrollToTop from "@/components/common/scrollToTop";
 import { ThemeProvider } from "next-themes";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,10 +42,13 @@ export default function RootLayout({
           enableSystem={true}
           defaultTheme="light"
         >
-          <Header />
-          <main className="">{children}</main>
-          <Footer />
-          <ScrollToTop />
+          <Suspense fallback={<Loading />}>
+            <Header />
+
+            <main className="">{children}</main>
+            <Footer />
+            <ScrollToTop />
+          </Suspense>
         </ThemeProvider>
       </body>
     </html>

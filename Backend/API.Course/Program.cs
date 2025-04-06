@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SharedLib;
 using API.Course.DAL.Migrations;
+using API.Course.Model.AppSetting;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
@@ -19,10 +20,15 @@ var connectionString = configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CourseContext>(options =>
     options.UseSqlServer(connectionString));
 
+
+builder.Services.Configure<MeiliSearchSetting>(builder.Configuration.GetSection("MeiliSearchSetting"));
+
+
 // Add Services
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ICourseService, CourseService>();
 builder.Services.AddTransient<IPublicCourseService, PublicCourseService>();
+builder.Services.AddTransient<IMeiliSearchService, MeiliSearchService>();
 
 builder.Services.AddControllers(options =>
 {

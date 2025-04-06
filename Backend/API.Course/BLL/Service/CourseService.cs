@@ -11,9 +11,11 @@ namespace API.Course.BLL.Service
     public class CourseService : ICourseService
     {
         private readonly CourseContext _context;
-        public CourseService(CourseContext context)
+        private readonly IMeiliSearchService _meiliSearchService;
+        public CourseService(CourseContext context, IMeiliSearchService meiliSearchService)
         {
             _context = context;
+            _meiliSearchService = meiliSearchService;
         }
 
         public async Task<ResponseModel> GetCourseLevel()
@@ -160,10 +162,14 @@ namespace API.Course.BLL.Service
                 _context.Courses.Update(courseEntity);
                 await _context.SaveChangesAsync();
             }
+            SyncCourse();
             return new ResponseModel(true, "Course saved successfully");
         }
 
-
+        private void SyncCourse()
+        {
+            _meiliSearchService.SyncCourse();
+        }
         public async Task<ResponseModel> GetById(int courseId)
         {
             var course = await _context.Courses
@@ -307,6 +313,7 @@ namespace API.Course.BLL.Service
                 await AddModule(userId, model);
             else
                 await UpdateModule(userId, model);
+
             return new ResponseModel(true, "Module saved successfully");
         }
 
@@ -499,7 +506,7 @@ namespace API.Course.BLL.Service
                 }
             }
             await _context.SaveChangesAsync();
-            return new ResponseModel(true, "Record saved successfully",new{id=item?.CourseAdditionalId });
+            return new ResponseModel(true, "Record saved successfully", new { id = item?.CourseAdditionalId });
         }
 
         public async Task<ResponseModel> DeleteAdditionalCourse(int id)
