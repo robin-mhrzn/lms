@@ -20,6 +20,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { PaginationModel } from "@/util/types/paginationModel";
+import Link from "next/link";
 
 interface RequestCourseListProps {
   categoryId?: number;
@@ -243,50 +244,55 @@ const SearchListComponent: React.FC<SearchListProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {coursePagination.data.length > 0 ? (
             coursePagination.data.map((course) => (
-              <Card
+              <Link
+                href={`${NavigationRoute.COURSEDETAIL}${course.courseId}`}
                 key={course.courseId}
-                className="shadow-lg rounded-lg overflow-hidden border border-gray-200"
               >
-                <div className="relative">
-                  <img
-                    src={course.thumbnailImageUrl}
-                    alt={course.title}
-                    className="w-full h-40 object-cover"
-                  />
-                  <div className="absolute top-2 left-2 bg-primary text-white text-xs px-2 py-1 rounded">
-                    {course.language}
+                <Card
+                  key={course.courseId}
+                  className="shadow-lg rounded-lg overflow-hidden border border-gray-200"
+                >
+                  <div className="relative">
+                    <img
+                      src={course.thumbnailImageUrl}
+                      alt={course.title}
+                      className="w-full h-40 object-cover"
+                    />
+                    <div className="absolute top-2 left-2 bg-primary text-white text-xs px-2 py-1 rounded">
+                      {course.language}
+                    </div>
                   </div>
-                </div>
-                <CardHeader className="p-4">
-                  <CardTitle className="text-lg font-semibold text-gray-800 truncate">
-                    {course.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <div className="text-sm text-gray-600 space-y-1">
-                    <p>
-                      <span className="font-medium text-gray-800">
-                        Category:
+                  <CardHeader className="p-4">
+                    <CardTitle className="text-lg font-semibold text-gray-800 truncate">
+                      {course.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>
+                        <span className="font-medium text-gray-800">
+                          Category:
+                        </span>
+                        <b>{course.categoryName}</b>
+                      </p>
+                      <p>
+                        <span className="font-medium text-gray-800">
+                          Sub Category:
+                        </span>
+                        <b>{course.subCategoryName}</b>
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center mt-4">
+                      <span className="text-lg font-bold text-primary">
+                        ${course.price}
                       </span>
-                      <b>{course.categoryName}</b>
-                    </p>
-                    <p>
-                      <span className="font-medium text-gray-800">
-                        Sub Category:
-                      </span>
-                      <b>{course.subCategoryName}</b>
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center mt-4">
-                    <span className="text-lg font-bold text-primary">
-                      ${course.price}
-                    </span>
-                    <button className="px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-primary-dark">
-                      Enroll Now
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
+                      <button className="px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-primary-dark">
+                        Enroll Now
+                      </button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))
           ) : (
             <div className="col-span-full text-center text-gray-500">

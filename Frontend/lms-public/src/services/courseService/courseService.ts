@@ -25,6 +25,41 @@ export interface ILanguageModel {
   languageId: number;
   name: string;
 }
+
+export interface ICourseDetailModel {
+  courseId: number;
+  title: string;
+  description: string;
+  price: number;
+  basePrice: number;
+  levelName: string;
+  duration: number;
+  languageName: string;
+  thumbnailImageUrl: string;
+  tags: string[];
+  additionalType: IAdditionalTypeModel[];
+  modules: IModuleModel[];
+}
+
+export interface IAdditionalTypeModel {
+  additionalType: string;
+  items: string[];
+}
+
+export interface IModuleModel {
+  moduleId: number;
+  title: string;
+  description: string;
+  lessons: ILessonModel[];
+}
+
+export interface ILessonModel {
+  lessonId: number;
+  title: string;
+  description: string;
+  duration: number;
+  videoUrl: string;
+}
 export class CourseService {
   apiService = new APIService();
   getLanguage = async (): Promise<ILanguageModel[]> => {
@@ -113,6 +148,20 @@ export class CourseService {
       })
       .catch(() => {
         return new PaginationModel<CourseListModel>();
+      });
+  };
+  getCourseDetail = async (courseId: number): Promise<ICourseDetailModel> => {
+    return await this.apiService
+      .callApi({
+        url: "publicCourse/CourseDetail?courseId=" + courseId,
+        method: "GET",
+      })
+      .then((response) => {
+        if (response.success) {
+          return response.data as ICourseDetailModel;
+        } else {
+          return {} as ICourseDetailModel;
+        }
       });
   };
 }

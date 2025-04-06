@@ -65,11 +65,45 @@ namespace API.Course.BLL.Service
             var data = await query.ToListAsync();
             return new ResponseModel(true, "Success", data);
         }
-        //public async Task<ResponseModel> GetCourse(PublicCourseRequestModel model)
-        //{
-            
-        //}
 
+        public async Task<ResponseModel> GetCourseDetail(int courseId)
+        {
+            var course = await (from c in _context.Courses.Where(a => a.CourseId == courseId && a.IsPublished)
+                                join l in _context.Levels on c.LevelId equals l.LevelId
+                                join lang in _context.Languages on c.LanguageId equals lang.LanguageId
+                                select new
+                                {
+                                    c.CourseId,
+                                    c.Title,
+                                    c.Description,
+                                    c.Price,
+                                    c.BasePrice,
+                                    LevelName = l.Name,
+                                    c.Duration,
+                                    LanguageName = lang.Name,
+                                    c.ThumbnailImageUrl,
+                                    Tags = c.CourseTags.Select(a => a.Tags.Name).AsEnumerable(),
+                                    AdditionalType=(from a in _context.CourseAdditionalTypes
+                                                    join ca in _context.CourseAdditionals on a.CourseAdditionalTypeId equals ca.CourseAdditionalTypeId
+                                                    where ca.CourseId == c.CourseId
+                                                    group new { a, ca } by a.AdditionalType into g
+                                                    select new
+                                                    {
+                                                        AdditionalType = g.Key,
+                                                        Items = g.Select(x => x.ca.Description).ToList()
+                                                    }).AsEnumerable(),
+                                    Modules=(from m in _context.Modules
+                                             where m.CourseId==c.CourseId
+                                             orderby m.Position
+                                             select new
+                                             {
+                                                 m.ModuleId,
+                                                 m.Title,
+                                                 m.Description,
+                                                 LessonCount=m.Lessons.Count()
+                                             }).AsEnumerable()
+                                }).FirstOrDefaultAsync();
+            return new ResponseModel(true, "Success", course);
+        }
     }
-
 }

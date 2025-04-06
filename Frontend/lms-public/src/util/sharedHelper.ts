@@ -87,9 +87,9 @@ export const convertJsonToFormData = (
   return formData;
 };
 export const getImageUrl = (imageUrl?: string): string => {
-  const domain = "https://localhost:7272/uploads/";
+  const domain = process.env.NEXT_PUBLIC_IMAGE_URL; //"https://localhost:7272/uploads/";
   if (!imageUrl) {
-    return "";
+    return "/images/default.png"; // Default image path
   }
   return imageUrl.startsWith("http") ? imageUrl : `${domain}${imageUrl}`;
 };

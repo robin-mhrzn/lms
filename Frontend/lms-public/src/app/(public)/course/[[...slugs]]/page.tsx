@@ -5,6 +5,7 @@ import {
 import React from "react";
 import SearchListComponent from "@/components/course/searchList/searchList";
 import { PaginationConstants } from "@/util/constants";
+import MainContainer from "@/components/publicLayout/mainContainer";
 
 export default async function Page({
   params,
@@ -49,25 +50,23 @@ export default async function Page({
     ]);
 
   return (
-    <section>
-      <div className="container mx-auto lg:max-w-screen-xl md:max-w-screen-md px-4 pt-10">
-        <SearchListComponent
-          parentCategory={parentCategory}
-          subCategory={subCategory}
-          languagelist={languageList}
-          searchRequest={{
-            categoryId: parsedCategoryId,
-            subCategoryId: parsedSubCategoryId,
-            price: price ? price.split("-").map(Number) : [0, 1000],
-            query,
-            sortBy,
-            pageNo: parsedPageNo,
-            pageSize: parsedPageSize,
-            languageId: parsedLanguageId,
-          }}
-          coursePagination={coursePagination}
-        />
-      </div>
-    </section>
+    <MainContainer>
+      <SearchListComponent
+        parentCategory={parentCategory}
+        subCategory={subCategory}
+        languagelist={languageList}
+        searchRequest={{
+          categoryId: parsedCategoryId,
+          subCategoryId: parsedSubCategoryId,
+          price: price ? price.split("-").map(Number) : [0, 1000],
+          query,
+          sortBy,
+          pageNo: parsedPageNo,
+          pageSize: parsedPageSize,
+          languageId: parsedLanguageId,
+        }}
+        coursePagination={coursePagination}
+      />
+    </MainContainer>
   );
 }

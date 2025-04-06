@@ -41,5 +41,12 @@ namespace API.Course.Controllers
             var result = await _meiliSearchService.GetCourse(model);
             return Ok(result);
         }
+
+        [HttpGet("CourseDetail")]
+        public async Task<IActionResult> GetCourseDetail(int courseId)
+        {
+            var result = await _publicCourseService.GetCourseDetail(courseId);
+            return Ok(result);
+        }
     }
 }

@@ -3,6 +3,7 @@ export enum NavigationRoute {
   LOGIN = "/signin/",
   REGISTER = "/signup/",
   COURSE = "/course",
+  COURSEDETAIL = "/courseDetail/",
   CATEGORY = "/category",
 }
 
