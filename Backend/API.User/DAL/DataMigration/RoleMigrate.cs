@@ -1,5 +1,4 @@
 ﻿using API.User.DAL.Context;
-using API.User.Shared;
 using SharedLib;
 namespace API.User.DAL.DataMigration;
 public class RoleMigrate
@@ -22,8 +21,8 @@ public class RoleMigrate
 
             if (rolesToAdd.Any())
             {
-                context.Roles.AddRange(rolesToAdd);
-                context.SaveChanges();
+                await context.Roles.AddRangeAsync(rolesToAdd);
+                await context.SaveChangesAsync();
             }
         }
     }

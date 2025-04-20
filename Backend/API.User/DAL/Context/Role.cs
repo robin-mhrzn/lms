@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace API.User.DAL.Context;
+﻿namespace API.User.DAL.Context;
 
 public partial class Role
 {

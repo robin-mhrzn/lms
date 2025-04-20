@@ -22,6 +22,7 @@ builder.Services.AddDbContext<CourseContext>(options =>
 
 
 builder.Services.Configure<MeiliSearchSetting>(builder.Configuration.GetSection("MeiliSearchSetting"));
+builder.Services.Configure<WebHookSetting>(builder.Configuration.GetSection("WebHook"));
 
 
 // Add Services
@@ -29,6 +30,7 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ICourseService, CourseService>();
 builder.Services.AddTransient<IPublicCourseService, PublicCourseService>();
 builder.Services.AddTransient<IMeiliSearchService, MeiliSearchService>();
+builder.Services.AddTransient<IUserCourseService, UserCourseService>();
 
 builder.Services.AddControllers(options =>
 {
@@ -49,7 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings["SecretKey"])
+                Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]??"")
             )
         };
     });

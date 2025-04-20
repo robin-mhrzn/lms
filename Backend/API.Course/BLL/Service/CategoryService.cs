@@ -4,7 +4,6 @@ using API.Course.Model;
 using Microsoft.EntityFrameworkCore;
 using SharedLib;
 using SharedLib.Model;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace API.Course.BLL.Service
 {

@@ -28,7 +28,7 @@ export class APIService {
   }
   async init() {
     let authHelper = new AuthHelper();
-    this.authToken = await authHelper.getUserToken().access_token;
+    this.authToken = await authHelper.getUserToken().token;
     this.config = {
       ...this.config,
       headers: {
@@ -59,7 +59,6 @@ export class APIService {
         Authorization: `Bearer ${this.authToken}`,
       },
     };
-
     if (["POST", "PUT", "PATCH"].includes(method || "POST")) {
       options.body = JSON.stringify(data);
     }

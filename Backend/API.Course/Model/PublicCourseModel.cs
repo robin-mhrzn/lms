@@ -1,6 +1,4 @@
-﻿using System.Security.Principal;
-
-namespace API.Course.Model
+﻿namespace API.Course.Model
 {
     public class PublicCourseRequestModel
     {
@@ -24,5 +22,12 @@ namespace API.Course.Model
     public class PublicCategoryModel : PublicSubCategoryModel
     {
         public IEnumerable<PublicSubCategoryModel> SubCategories { get; set; } = [];
+    }
+
+    public class CheckCourseModel
+    {
+        public int UserId { get; set; }
+        public int CourseId { get; set; }
+
     }
 }

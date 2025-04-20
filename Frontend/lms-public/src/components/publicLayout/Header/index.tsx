@@ -10,6 +10,7 @@ import { useTheme } from "next-themes";
 import Logo from "./Logo";
 import { LogIn, UserPlus } from "lucide-react";
 import { NavigationRoute } from "@/util/navigation";
+import { AuthHelper } from "@/util/authHelper";
 
 const Header: React.FC = () => {
   const pathUrl = usePathname();
@@ -135,6 +136,17 @@ const Header: React.FC = () => {
             {headerData.map((item, index) => (
               <MobileHeaderLink key={index} item={item} />
             ))}
+            {/* {new AuthHelper().isAuthenticated() ? (
+              <div className="mt-4 flex flex-col space-y-4 w-full">
+                <Link
+                  href={""}
+                  className="text-primary text-lg font-medium hover:text-primary/80"
+                  onClick={() => setNavbarOpen(false)}
+                >
+                  Profile
+                </Link>
+              </div>
+            ) : ( */}
             <div className="mt-4 flex flex-col space-y-4 w-full">
               <Link
                 href="#"
@@ -157,6 +169,7 @@ const Header: React.FC = () => {
                 Sign Up
               </Link>
             </div>
+            {/* )} */}
           </nav>
         </div>
       </div>

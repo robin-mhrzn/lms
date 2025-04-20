@@ -3,8 +3,6 @@ using API.Course.DAL.Context;
 using API.Course.Model;
 using API.Course.Model.AppSetting;
 using Meilisearch;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using SharedLib;
 using SharedLib.Model;
@@ -25,44 +23,37 @@ namespace API.Course.BLL.Service
         }
         public async Task SyncCourse()
         {
-            try
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
-                using (var scope = _serviceScopeFactory.CreateScope())
-                {
-                    var _context = scope.ServiceProvider.GetRequiredService<CourseContext>();
+                var _context = scope.ServiceProvider.GetRequiredService<CourseContext>();
 
-                    var courses = (from c in _context.Courses//.Where(a => a.IsPublished == true)
-                                   join cat in _context.Categories on c.CategoryId equals cat.CategoryId
-                                   join pc in _context.Categories on cat.ParentId equals pc.CategoryId
-                                   join l in _context.Languages on c.LanguageId equals l.LanguageId
-                                   join lvl in _context.Levels on c.LevelId equals lvl.LevelId
-                                   select new MeiliSearchCourseModel
-                                   {
-                                       CourseId = c.CourseId,
-                                       CategoryId = pc.CategoryId,
-                                       CategoryName = pc.Name,
-                                       SubCategoryId = cat.CategoryId,
-                                       SubCategoryName = cat.Name,
-                                       Description = c.Description,
-                                       LanguageId = c.LanguageId,
-                                       Language = l.Name,
-                                       LevelId = c.LevelId,
-                                       LevelName = lvl.Name,
-                                       Price = c.Price,
-                                       ThumbnailImageUrl = c.ThumbnailImageUrl,
-                                       Title = c.Title
-                                   }).ToList();
+                var courses = (from c in _context.Courses//.Where(a => a.IsPublished == true)
+                               join cat in _context.Categories on c.CategoryId equals cat.CategoryId
+                               join pc in _context.Categories on cat.ParentId equals pc.CategoryId
+                               join l in _context.Languages on c.LanguageId equals l.LanguageId
+                               join lvl in _context.Levels on c.LevelId equals lvl.LevelId
+                               select new MeiliSearchCourseModel
+                               {
+                                   CourseId = c.CourseId,
+                                   CategoryId = pc.CategoryId,
+                                   CategoryName = pc.Name,
+                                   SubCategoryId = cat.CategoryId,
+                                   SubCategoryName = cat.Name,
+                                   Description = c.Description,
+                                   LanguageId = c.LanguageId,
+                                   Language = l.Name,
+                                   LevelId = c.LevelId,
+                                   LevelName = lvl.Name,
+                                   Price = c.Price,
+                                   ThumbnailImageUrl = c.ThumbnailImageUrl,
+                                   Title = c.Title
+                               }).ToList();
 
-                    var index = _meiliClient.Index(_meiliSearchSetting.IndexName);
-                    var task = await index.AddDocumentsAsync(courses, "courseId");
-                    var item = await index.WaitForTaskAsync(task.TaskUid);
-                    await index.UpdateFilterableAttributesAsync(new[] { "categoryId", "subCategoryId", "title", "languageId", "price" });
-                    await index.UpdateSortableAttributesAsync(new[] { "price" });
-                }
-            }
-            catch (Exception e)
-            {
-
+                var index = _meiliClient.Index(_meiliSearchSetting.IndexName);
+                var task = await index.AddDocumentsAsync(courses, "courseId");
+                var item = await index.WaitForTaskAsync(task.TaskUid);
+                await index.UpdateFilterableAttributesAsync(new[] { "categoryId", "subCategoryId", "title", "languageId", "price" });
+                await index.UpdateSortableAttributesAsync(new[] { "price" });
             }
         }
 

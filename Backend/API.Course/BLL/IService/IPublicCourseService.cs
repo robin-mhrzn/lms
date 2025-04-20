@@ -1,5 +1,4 @@
-﻿using API.Course.Model;
-using SharedLib;
+﻿using SharedLib;
 
 namespace API.Course.BLL.IService
 {
@@ -9,5 +8,6 @@ namespace API.Course.BLL.IService
         Task<ResponseModel> GetSubCategories(int categoryId);
         Task<ResponseModel> GetLanguage();
         Task<ResponseModel> GetCourseDetail(int courseId);
+       
     }
 }

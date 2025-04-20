@@ -6,9 +6,7 @@ using API.User.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SharedLib;
-using SharedLib.Model.AppSettings;
 using SharedLib.Services;
-using System.Net.Mail;
 
 namespace API.User.BLL.Service
 {
@@ -59,7 +57,7 @@ namespace API.User.BLL.Service
                 {"{email}",emailAddress },
                 {"otp",potentialUser.Otp }
             };
-            await _emailTemplateService.SendEmail("Verify your email", GetEmailTemplatePath() + "/OTPGeneration.html", emailAddress, userDictionary);
+            _emailTemplateService.SendEmail("Verify your email", GetEmailTemplatePath() + "/OTPGeneration.html", emailAddress, userDictionary);
 
             return new ResponseModel(true, "OTP has been sent to your email address");
         }
@@ -121,7 +119,7 @@ namespace API.User.BLL.Service
                 .Include(i => i.Role)
                 .FirstOrDefaultAsync(a => a.Email == model.Email);
 
-            if (user == null || !PasswordHelper.VerifyPassword(model.Password, user.Password))
+            if (user == null || !PasswordHelper.VerifyPassword(model.Password, user.Password??""))
                 return new ResponseModel(false, "Invalid email or password");
             if (!user.IsActive)
                 return new ResponseModel(false, "User not active. Please contact admin");
@@ -141,7 +139,7 @@ namespace API.User.BLL.Service
             {
                 return new ResponseModel(false, "User not found");
             }
-            if (!PasswordHelper.VerifyPassword(model.OldPassword, user.Password))
+            if (!PasswordHelper.VerifyPassword(model.OldPassword, user.Password??""))
             {
                 return new ResponseModel(false, "Old password is not correct");
             }
@@ -168,7 +166,7 @@ namespace API.User.BLL.Service
                 {"{email}",user.Email},
                 {"{resetCode}",user.ResetCode }
             };
-            await _emailTemplateService.SendEmail("Reset Password Code", GetEmailTemplatePath() + "/ResetPassword.html", emailAddress, userDictionary);
+            _emailTemplateService.SendEmail("Reset Password Code", GetEmailTemplatePath() + "/ResetPassword.html", emailAddress, userDictionary);
             return new ResponseModel(true, "Reset code has been sent to your email address. Please check your email");
         }
         public async Task<ResponseModel> VerifyResetCode(OTPModel model)
@@ -204,7 +202,7 @@ namespace API.User.BLL.Service
             {
                 {"{name}",user.Name },
             };
-            await _emailTemplateService.SendEmail("Reset Password Code", GetEmailTemplatePath() + "/ResetPasswordSuccess.html", user.Email, userDictionary);
+            _emailTemplateService.SendEmail("Reset Password Code", GetEmailTemplatePath() + "/ResetPasswordSuccess.html", user.Email, userDictionary);
 
             return new ResponseModel(true, "Password reset successfully");
         }

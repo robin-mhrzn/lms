@@ -47,11 +47,11 @@ namespace API.Mailer.BLL
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             var emailRequest = JsonSerializer.Deserialize<EmailRequestModel>(message);
-
-            Console.WriteLine($"Received email request for {emailRequest.To}");
-
+            if (emailRequest == null)
+                return;
             await _emailService.SendEmailAsync(emailRequest.To, emailRequest.Subject, emailRequest.Body);
-            await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            if (_channel != null)
+                await _channel.BasicAckAsync(ea.DeliveryTag, false);
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken)

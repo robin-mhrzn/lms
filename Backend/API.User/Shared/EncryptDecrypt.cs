@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 
 namespace API.User.Shared
 {
@@ -8,26 +7,23 @@ namespace API.User.Shared
         public static string HashPassword(string password)
         {
             // Generate a salt
-            using (var rng = new RNGCryptoServiceProvider())
+            byte[] salt = new byte[16]; // 128-bit salt
+            RandomNumberGenerator.Fill(salt);
+
+            // Hash the password using PBKDF2 with the salt
+            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256))
             {
-                byte[] salt = new byte[16]; // 128-bit salt
-                rng.GetBytes(salt);
+                byte[] hash = pbkdf2.GetBytes(20); 
 
-                // Hash the password using PBKDF2 with the salt
-                using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000))
-                {
-                    byte[] hash = pbkdf2.GetBytes(20); // 160-bit hash
+                byte[] hashBytes = new byte[36];
+                Array.Copy(salt, 0, hashBytes, 0, 16);
+                Array.Copy(hash, 0, hashBytes, 16, 20);
 
-                    // Combine salt and hash for storage
-                    byte[] hashBytes = new byte[36];
-                    Array.Copy(salt, 0, hashBytes, 0, 16);
-                    Array.Copy(hash, 0, hashBytes, 16, 20);
-
-                    // Return the result as Base64 string
-                    return Convert.ToBase64String(hashBytes);
-                }
+                // Return the result as Base64 string
+                return Convert.ToBase64String(hashBytes);
             }
         }
+
 
         public static bool VerifyPassword(string password, string storedHash)
         {
@@ -38,7 +34,7 @@ namespace API.User.Shared
             Array.Copy(hashBytes, 0, salt, 0, 16);
 
             // Hash the input password with the extracted salt
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000))
+            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256))
             {
                 byte[] hash = pbkdf2.GetBytes(20); // 160-bit hash
 
@@ -54,5 +50,4 @@ namespace API.User.Shared
             return true;
         }
     }
-
 }

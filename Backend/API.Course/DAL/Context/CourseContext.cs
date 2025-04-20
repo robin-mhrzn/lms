@@ -33,13 +33,20 @@ public partial class CourseContext : DbContext
 
     public virtual DbSet<Module> Modules { get; set; }
 
+    public virtual DbSet<Table1> Table1s { get; set; }
+
     public virtual DbSet<Tag> Tags { get; set; }
 
+    public virtual DbSet<UserCourse> UserCourses { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=ConnectionStrings:DefaultConnection");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=localhost;Database=ServiceCourse;UId=sa;password=Database@01;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.UseCollation("Latin1_General_CI_AS");
+
         modelBuilder.Entity<Category>(entity =>
         {
             entity.ToTable("Category");
@@ -187,6 +194,21 @@ public partial class CourseContext : DbContext
                 .HasConstraintName("FK_Module_Course");
         });
 
+        modelBuilder.Entity<Table1>(entity =>
+        {
+            entity.HasKey(e => e.UserCourseId);
+
+            entity.ToTable("Table_1");
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.PayDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Course).WithMany(p => p.Table1s)
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Table_1_Course");
+        });
+
         modelBuilder.Entity<Tag>(entity =>
         {
             entity.HasKey(e => e.TagsId);
@@ -194,6 +216,19 @@ public partial class CourseContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<UserCourse>(entity =>
+        {
+            entity.ToTable("UserCourse");
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.PayDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Course).WithMany(p => p.UserCourses)
+                .HasForeignKey(d => d.CourseId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserCourse_Course");
         });
 
         OnModelCreatingPartial(modelBuilder);

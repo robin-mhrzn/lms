@@ -46,4 +46,8 @@ public partial class Course
     public virtual Level Level { get; set; } = null!;
 
     public virtual ICollection<Module> Modules { get; set; } = new List<Module>();
+
+    public virtual ICollection<Table1> Table1s { get; set; } = new List<Table1>();
+
+    public virtual ICollection<UserCourse> UserCourses { get; set; } = new List<UserCourse>();
 }

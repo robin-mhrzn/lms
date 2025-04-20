@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedLib.Helper;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace API.User.Controllers
 {

@@ -24,6 +24,7 @@ namespace API.Course.BLL.IService
         Task<ResponseModel> SetCourseThumbnail(CourseThumbnailModel model);
         Task<ResponseModel> SetAdditionalCourse(CourseAdditionalItemModel model);
         Task<ResponseModel> DeleteAdditionalCourse(int id);
+        Task<ResponseModel> CheckCoursePrice(int userId, int courseId);
     }
 
 }

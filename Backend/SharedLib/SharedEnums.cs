@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SharedLib
+﻿namespace SharedLib
 {
     public class SharedEnums
     {
@@ -20,5 +14,10 @@ namespace SharedLib
             Desc
         }
 
+        public enum WebhookName
+        {
+            CourseCheck,
+            PurchaseCourse
+        }
     }
 }

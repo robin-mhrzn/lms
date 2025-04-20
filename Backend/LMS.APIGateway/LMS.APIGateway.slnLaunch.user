@@ -4,7 +4,7 @@
     "Projects": [
       {
         "Path": "LMS.APIGateway.csproj",
-        "Action": "Start"
+        "Action": "StartWithoutDebugging"
       },
       {
         "Path": "..\\API.User\\API.User.csproj",
@@ -16,6 +16,14 @@
       },
       {
         "Path": "..\\API.Image\\API.Image.csproj",
+        "Action": "StartWithoutDebugging"
+      },
+      {
+        "Path": "..\\Order\\API.Order.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\API.Mailer\\API.Mailer.csproj",
         "Action": "Start"
       }
     ]

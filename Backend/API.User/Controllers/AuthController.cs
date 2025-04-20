@@ -1,8 +1,6 @@
 ﻿using API.User.BLL.IService;
 using API.User.Model;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SharedLib;
 
 namespace API.User.Controllers
 {

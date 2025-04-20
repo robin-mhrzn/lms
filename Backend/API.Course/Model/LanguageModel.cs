@@ -3,6 +3,6 @@
     public class LanguageModel
     {
         public int LanguageId { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

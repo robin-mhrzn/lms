@@ -1,6 +1,5 @@
 ﻿using API.Course.BLL.IService;
 using API.Course.Model;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Course.Controllers

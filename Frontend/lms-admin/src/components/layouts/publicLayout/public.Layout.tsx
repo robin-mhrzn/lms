@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Card } from "antd";
 import { Layout } from "antd";
-import logo from "/public/logo.svg";
+import logo from "/logo.svg";
 
 const PublicLayout = () => {
   const { Footer } = Layout;

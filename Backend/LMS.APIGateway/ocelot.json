@@ -78,6 +78,19 @@
       "UpstreamPathTemplate": "/api/upload/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST" ],
       "Priority": 2
+    },
+    {
+      "DownstreamPathTemplate": "/order/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7130
+        }
+      ],
+      "UpstreamPathTemplate": "/api/order/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "Priority": 2
     }
   ],
   "GlobalConfiguration": {

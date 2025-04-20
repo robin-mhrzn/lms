@@ -38,7 +38,6 @@ const Signin = () => {
     authService.login({
       data: data,
       callback: (res: AuthUserModel) => {
-        debugger;
         const authHelper = new AuthHelper();
         authHelper.setUserAuth(res);
         setTimeout(function () {

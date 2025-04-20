@@ -55,4 +55,8 @@ export class AuthHelper {
       expires: new Date(0),
     });
   }
+  isAuthenticated() {
+    const userToken = this.getUserToken();
+    return userToken && userToken.token ? true : false;
+  }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SharedLib;
 using SharedLib.Helper;
 
 namespace API.Course.Controllers

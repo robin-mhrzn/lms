@@ -1,17 +1,15 @@
 ﻿using API.Course.DAL.Context;
-using SharedLib;
 
 namespace API.Course.DAL.Migrations
 {
     public class DataMigration
     {
-        private static List<string> languages = new List<string>
+        private static List<string> languages = new()
         {
             "English","Nepali","Japnese"
         };
-        private static List<string> levels = new List<string>
-        { "Beginner", "Intermediate", "Advanced" };
-        public static async Task MigrateData(IApplicationBuilder app)
+        private static List<string> levels = new() { "Beginner", "Intermediate", "Advanced" };
+        public static void MigrateData(IApplicationBuilder app)
         {
             using (var scope = app.ApplicationServices.CreateScope())
             {
@@ -32,9 +30,10 @@ namespace API.Course.DAL.Migrations
                     context.SaveChanges();
                 }
 
-                var levelsToAdd = levels.Where(l=>!context.Levels.Any(r => r.Name == l))
-                    .Select(n=>new Level
+                var levelsToAdd = levels.Where(l => !context.Levels.Any(r => r.Name == l))
+                    .Select(n => new Level
                     {
+                        Name=n
                     }).ToList();
                 if (levelsToAdd.Any())
                 {

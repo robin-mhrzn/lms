@@ -4,7 +4,6 @@ using API.Course.Model;
 using Microsoft.EntityFrameworkCore;
 using SharedLib;
 using SharedLib.Model;
-using static API.Course.Model.CoursePaginationRequestModel;
 
 namespace API.Course.BLL.Service
 {
@@ -56,28 +55,15 @@ namespace API.Course.BLL.Service
                              ParentCategoryName = pcat.Name,
                              Price = c.Price
                          }).AsNoTracking();
-            switch (model.SortField.ToLower())
+            query = model.SortField.ToLower() switch
             {
-                case "name":
-                    query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.Name) : query.OrderByDescending(a => a.Name);
-                    break;
-                case "ispublished":
-                    query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.IsPublished) : query.OrderByDescending(a => a.IsPublished);
-                    break;
-                case "parentcategoryname":
-                    query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.ParentCategoryName) : query.OrderByDescending(a => a.ParentCategoryName);
-                    break;
-                case "categoryname":
-                    query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.CategoryName) : query.OrderByDescending(a => a.CategoryName);
-                    break;
-                case "language":
-                    query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.Language) : query.OrderByDescending(a => a.Language);
-                    break;
-                default:
-                    query = model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.CourseId) : query.OrderByDescending(a => a.CourseId);
-                    break;
-
-            }
+                "name" => model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.Name) : query.OrderByDescending(a => a.Name),
+                "ispublished" => model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.IsPublished) : query.OrderByDescending(a => a.IsPublished),
+                "parentcategoryname" => model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.ParentCategoryName) : query.OrderByDescending(a => a.ParentCategoryName),
+                "categoryname" => model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.CategoryName) : query.OrderByDescending(a => a.CategoryName),
+                "language" => model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.Language) : query.OrderByDescending(a => a.Language),
+                _ => model.SortOrder == SharedEnums.PaginationSortBy.Asc.ToString().ToLower() ? query.OrderBy(a => a.CourseId) : query.OrderByDescending(a => a.CourseId),
+            };
             foreach (var filter in model.Filters)
             {
                 switch (filter.FieldName.ToLower())
@@ -258,8 +244,8 @@ namespace API.Course.BLL.Service
                                      {
                                          Name = t
                                      }).ToList();
-                _context.Tags.AddRange(tagsTobeAdded);
-                _context.SaveChanges();
+                await _context.Tags.AddRangeAsync(tagsTobeAdded);
+                await _context.SaveChangesAsync();
                 var tagIds = _context.Tags
                                            .Where(a => tags.Contains(a.Name))
                                            .Select(a => a.TagsId)
@@ -283,9 +269,9 @@ namespace API.Course.BLL.Service
                                           }).ToList();
                 if (newCourseTags.Any())
                 {
-                    _context.CourseTags.AddRange(newCourseTags);
+                    await _context.CourseTags.AddRangeAsync(newCourseTags);
                 }
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return new ResponseModel(true, "Tags set successfully");
             });
 
@@ -516,6 +502,20 @@ namespace API.Course.BLL.Service
             _context.CourseAdditionals.Remove(item);
             await _context.SaveChangesAsync();
             return new ResponseModel(true, "Record deleted successfully");
+        }
+
+        public async Task<ResponseModel> CheckCoursePrice(int userId, int courseId)
+        {
+            var course =await (from c in _context.Courses.Where(a => a.CourseId == courseId && a.IsPublished == true)
+                          join uc in _context.UserCourses on c.CourseId equals uc.CourseId into userCoursesGroup
+                          from uc in userCoursesGroup.DefaultIfEmpty()
+                          select new
+                          {
+                              CourseId = c.CourseId,
+                              Price = c.Price,
+                              IsAlreadyPurchase = uc != null
+                          }).FirstOrDefaultAsync();
+            return new ResponseModel(true, "Success", course);
         }
     }
 

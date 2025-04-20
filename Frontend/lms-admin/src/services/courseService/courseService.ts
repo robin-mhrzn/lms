@@ -391,7 +391,6 @@ export class CourseService {
         method: "POST",
       })
       .then((res: any) => {
-        debugger;
         if (res?.data?.success == true) {
           callback(res?.data as ResponseModel);
         }
