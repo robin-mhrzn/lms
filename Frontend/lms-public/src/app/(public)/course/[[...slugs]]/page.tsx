@@ -1,11 +1,8 @@
-import {
-  CourseListModel,
-  CourseService,
-} from "@/services/courseService/courseService";
+import { CourseService } from "@/services/courseService/courseService";
 import React from "react";
 import SearchListComponent from "@/components/course/searchList/searchList";
 import { PaginationConstants } from "@/util/constants";
-import MainContainer from "@/components/publicLayout/mainContainer";
+import MainContainer from "@/components/layout/public/mainContainer";
 
 export default async function Page({
   params,

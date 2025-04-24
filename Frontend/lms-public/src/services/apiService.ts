@@ -1,5 +1,6 @@
 import { AuthHelper } from "@/util/authHelper";
 import { NavigationRoute } from "@/util/navigation";
+import { ResponseModel } from "@/util/types/responseModel";
 
 interface Params {
   baseUrl: string;
@@ -47,7 +48,11 @@ export class APIService {
     };
   };
 
-  callApi = async ({ url, data, method }: ServiceTS): Promise<any> => {
+  callApi = async ({
+    url,
+    data,
+    method,
+  }: ServiceTS): Promise<ResponseModel> => {
     if (!this.authToken) {
       await this.init();
     }
@@ -67,9 +72,13 @@ export class APIService {
       typeof window !== "undefined" &&
       responseData.message === "Unauthorized"
     ) {
-      new AuthHelper().removeUserToken();
+      new AuthHelper().logout();
       location.href = NavigationRoute.LOGIN;
-      return null;
+      return new ResponseModel(
+        false,
+        "You are not authorized to access this resource",
+        null
+      );
     }
     return responseData;
   };

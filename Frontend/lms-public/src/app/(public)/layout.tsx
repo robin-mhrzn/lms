@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
-import "./globals.css";
+import "./../globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import ScrollToTop from "@/components/common/scrollToTop";
 import { ThemeProvider } from "next-themes";
+import { Suspense } from "react";
+import { AuthProvider } from "@/context/auth/Auth.Context";
+import Header from "@/components/layout/public/Header";
+import Footer from "@/components/layout/public/Footer";
+import Loading from "../loading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,23 +29,19 @@ const font = Poppins({
   weight: ["400", "500", "600", "700"],
 });
 
-export default function RootLayout({
+export default function PublicLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${font.className}`}>
-        <ThemeProvider
-          attribute="class"
-          enableSystem={true}
-          defaultTheme="light"
-        >
-          {children}
-          <ScrollToTop />
-        </ThemeProvider>
-      </body>
-    </html>
+    <Suspense fallback={<Loading />}>
+      <AuthProvider>
+        <Header />
+      </AuthProvider>
+      <main className="">{children}</main>
+      <Footer />
+      <ScrollToTop />
+    </Suspense>
   );
 }

@@ -49,7 +49,7 @@ export class AuthHelper {
       return new AuthUserModel();
     }
   }
-  removeUserToken() {
+  logout() {
     setCookie(this.cookieName, "", {
       sameSite: "strict",
       expires: new Date(0),
@@ -58,5 +58,9 @@ export class AuthHelper {
   isAuthenticated() {
     const userToken = this.getUserToken();
     return userToken && userToken.token ? true : false;
+  }
+  getAuthUser() {
+    const userToken = this.getUserToken();
+    return userToken && userToken.token ? userToken : null;
   }
 }

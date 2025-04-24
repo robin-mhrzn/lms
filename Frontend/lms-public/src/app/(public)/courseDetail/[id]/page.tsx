@@ -1,17 +1,10 @@
 import PurchaseComponent from "@/components/course/purchase/purchase.Component";
 import NotFoundComponent from "@/components/extras/notFound";
-import MainContainer from "@/components/publicLayout/mainContainer";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import MainContainer from "@/components/layout/public/mainContainer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CourseService } from "@/services/courseService/courseService";
 import { getImageUrl } from "@/util/sharedHelper";
-import { CheckCircle, ChevronRight, Clock } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = await params;

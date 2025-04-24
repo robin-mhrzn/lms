@@ -1,4 +1,4 @@
-import MainContainer from "@/components/publicLayout/mainContainer";
+import MainContainer from "@/components/layout/public/mainContainer";
 import {
   CategoryItemModel,
   CourseService,

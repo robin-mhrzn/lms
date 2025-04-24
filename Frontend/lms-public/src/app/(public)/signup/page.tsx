@@ -8,7 +8,7 @@ import * as yup from "yup";
 import { AuthService } from "@/services/authService/authService";
 import { useRouter } from "next/navigation";
 import { FiRefreshCcw } from "react-icons/fi";
-import MainContainer from "@/components/publicLayout/mainContainer";
+import MainContainer from "@/components/layout/public/mainContainer";
 const Signup = () => {
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
