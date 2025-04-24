@@ -1,10 +1,20 @@
 "use client";
 
 import SignInComponent from "@/components/auth/signIn.Component";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import ResetPasswordComponent from "@/components/auth/forgotPwd.Component";
 import MainContainer from "@/components/layout/public/mainContainer";
+import { AuthHelper } from "@/util/authHelper";
+import { useRouter } from "next/navigation";
+import { NavigationRoute } from "@/util/navigation";
 const Signin = () => {
+  const router = useRouter();
+  useEffect(() => {
+    const isAuthenticate = new AuthHelper().isAuthenticated();
+    if (isAuthenticate) {
+      router.push(NavigationRoute.DASHBOARD);
+    }
+  }, []);
   const [isResetPassword, setIsResetPassword] = useState(false);
   return (
     <MainContainer>
