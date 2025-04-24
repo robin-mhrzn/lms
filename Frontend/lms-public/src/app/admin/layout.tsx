@@ -1,6 +1,5 @@
 import AppSidebar from "@/components/layout/admin/appSidebar";
 import Header from "@/components/layout/admin/header";
-import MainContainer from "@/components/layout/admin/mainContainer";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 export default function AdminLayout({

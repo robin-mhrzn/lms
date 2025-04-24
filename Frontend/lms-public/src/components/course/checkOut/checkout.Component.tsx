@@ -49,7 +49,12 @@ const CheckoutComponent: React.FC<CheckOutComponentProps> = ({
       return;
     }
     if (token) {
-      const response = await orderService.addOrder(courseId, price, token.id);
+      const response = await orderService.addOrder(
+        courseId,
+        courseTitle,
+        price,
+        token.id
+      );
       if (response.success == true) {
         showMessage(true, "Course has been purchased successfully.");
         if (handleOnSetPurchase) {

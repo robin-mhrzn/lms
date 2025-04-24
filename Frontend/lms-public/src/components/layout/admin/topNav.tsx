@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { AxeIcon } from "lucide-react";
 
 interface TopNavProps extends React.HTMLAttributes<HTMLElement> {
   links: {

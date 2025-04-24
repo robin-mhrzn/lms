@@ -29,5 +29,12 @@ namespace API.Order.Controllers
             return Ok(result);
         }
 
+        [HttpGet("PurchasedCourses")]
+        public async Task<IActionResult> PurchasedCourses([FromQuery] PaymentListRequestModel model)
+        {
+            var result=await _orderService.GetPurchaseList(UserId, model);  
+            return Ok(result);
+        }
+        
     }
 }

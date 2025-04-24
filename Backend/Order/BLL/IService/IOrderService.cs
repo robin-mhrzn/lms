@@ -7,5 +7,6 @@ namespace API.Order.BLL.IService
     {
         Task<ResponseModel> AddOrder(int userId, OrderModel model);
         Task<ResponseModel> IsCoursePurchase(int courseId, int userId);
+        Task<ResponseModel> GetPurchaseList(int userId, PaymentListRequestModel model);
     }
 }

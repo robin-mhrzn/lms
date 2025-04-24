@@ -16,12 +16,18 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { AuthHelper } from "@/util/authHelper";
+import { AuthUserModel } from "@/util/types/authModel";
 import { BadgeCheck, ChevronsUpDown, LogOut, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const NavUser = () => {
   const { isMobile } = useSidebar();
-  const authUser = new AuthHelper().getAuthUser();
+  const [authUser, setAuthUser] = useState<AuthUserModel>(new AuthUserModel());
+  useEffect(() => {
+    const userAuthModel = new AuthHelper().getAuthUser();
+    setAuthUser(userAuthModel);
+  }, []);
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -65,13 +71,6 @@ const NavUser = () => {
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>

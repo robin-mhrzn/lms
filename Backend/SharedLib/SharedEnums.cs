@@ -17,7 +17,8 @@
         public enum WebhookName
         {
             CourseCheck,
-            PurchaseCourse
+            PurchaseCourse,
+            CourseList
         }
     }
 }

@@ -506,16 +506,28 @@ namespace API.Course.BLL.Service
 
         public async Task<ResponseModel> CheckCoursePrice(int userId, int courseId)
         {
-            var course =await (from c in _context.Courses.Where(a => a.CourseId == courseId && a.IsPublished == true)
-                          join uc in _context.UserCourses on c.CourseId equals uc.CourseId into userCoursesGroup
-                          from uc in userCoursesGroup.DefaultIfEmpty()
-                          select new
-                          {
-                              CourseId = c.CourseId,
-                              Price = c.Price,
-                              IsAlreadyPurchase = uc != null
-                          }).FirstOrDefaultAsync();
+            var course = await (from c in _context.Courses.Where(a => a.CourseId == courseId && a.IsPublished == true)
+                                join uc in _context.UserCourses on c.CourseId equals uc.CourseId into userCoursesGroup
+                                from uc in userCoursesGroup.DefaultIfEmpty()
+                                select new
+                                {
+                                    CourseId = c.CourseId,
+                                    Price = c.Price,
+                                    IsAlreadyPurchase = uc != null
+                                }).FirstOrDefaultAsync();
             return new ResponseModel(true, "Success", course);
+        }
+
+        public async Task<ResponseModel> GetCourseData(int[] courseId)
+        {
+            var course = await (from c in _context.Courses.Where(a => courseId.Contains(a.CourseId))
+                                select new
+                                {
+                                    CourseId = c.CourseId,
+                                    CourseName = c.Title,
+                                    ThumbnailImageUrl=c.ThumbnailImageUrl,
+                                }).ToListAsync();
+            return new ResponseModel(true, "success", course);
         }
     }
 

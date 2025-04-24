@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SharedLib;
 using SharedLib.Helper;
+using SharedLib.Model;
 using SharedLib.Model.Webhook;
 using Stripe.V2;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace API.Order.BLL.Service
 {
@@ -73,6 +75,7 @@ namespace API.Order.BLL.Service
             var order = new CoursePayment
             {
                 CourseId = model.CourseId,
+                CourseName = model.CourseName,
                 CreatedDate = DateTime.UtcNow,
                 Price = price,
                 Status = Shared.EnumCollection.StripeStatus.pending.ToString(),
@@ -130,6 +133,56 @@ namespace API.Order.BLL.Service
         {
             var isPurchased = await _context.CoursePayments.AnyAsync(a => a.CourseId == courseId && a.UserId == userId);
             return new ResponseModel(true, "Success", new { IsPurchaseItem = isPurchased });
+        }
+
+        public async Task<ResponseModel> GetPurchaseList(int userId, PaymentListRequestModel model)
+        {
+            var query = _context.CoursePayments
+                .Where(a => a.UserId == userId)
+                .OrderByDescending(cp => cp.CoursePaymentId)
+                .Select(cp => cp.CourseId);
+
+            int total = await query.CountAsync();
+            var courseIds = await query.Skip((model.CurrentPage - 1) * model.PageSize)
+                .Take(model.PageSize)
+                .ToListAsync();
+
+            if (!courseIds.Any())
+            {
+                return new ResponseModel(true, "No courses found", new PaginationModel<OrderCourseListModel>
+                {
+                    PageSize = model.PageSize,
+                    TotalRecord = total,
+                    Data = new List<OrderCourseListModel>(),
+                    CurrentPage = model.CurrentPage,
+                });
+            }
+
+            var courseItem = await CallWebhook(_apiHelperSetting.WebhookUrl, new WebHoookPayloadModel
+            {
+                Name = SharedEnums.WebhookName.CourseList.ToString(),
+                Data = courseIds
+            });
+
+            if (courseItem == null || courseItem.Data == null || !courseItem.Success)
+            {
+                return new ResponseModel(false, "Failed to fetch course list");
+            }
+
+            var courseList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<OrderCourseListModel>>(courseItem.Data.ToString() ?? string.Empty);
+            if (courseList == null)
+            {
+                return new ResponseModel(false, "Unexpected error occurred. Please try again later!");
+            }
+
+            var paginationResponse = new PaginationModel<OrderCourseListModel>
+            {
+                PageSize = model.PageSize,
+                TotalRecord = total,
+                Data = courseList,
+                CurrentPage = model.CurrentPage,
+            };
+            return new ResponseModel(true, "Success", paginationResponse);
         }
     }
 }

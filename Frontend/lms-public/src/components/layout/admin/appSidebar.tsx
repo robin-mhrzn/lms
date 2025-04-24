@@ -22,7 +22,7 @@ const navGroups: INavGroup[] = [
       },
       {
         title: "My Purchases",
-        url: NavigationRoute.MY_PURCHASES,
+        url: NavigationRoute.MY_PURCHASE,
       },
       { title: "Profile", url: NavigationRoute.PROFILE },
     ],

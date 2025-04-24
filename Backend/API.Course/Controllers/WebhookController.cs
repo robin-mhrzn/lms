@@ -17,12 +17,12 @@ public class WebhookController : ControllerBase
     private readonly ICourseService _courseService;
     private readonly IUserCourseService _userCourseService;
     private readonly WebHookSetting _webhookSetting;
-    public WebhookController(ILogger<WebhookController> logger, ICourseService courseService,IUserCourseService userCourseService, IOptions<WebHookSetting> options)
+    public WebhookController(ILogger<WebhookController> logger, ICourseService courseService, IUserCourseService userCourseService, IOptions<WebHookSetting> options)
     {
         _logger = logger;
         _courseService = courseService;
         _webhookSetting = options.Value;
-        _userCourseService=userCourseService;
+        _userCourseService = userCourseService;
     }
 
     [HttpPost]
@@ -45,6 +45,11 @@ public class WebhookController : ControllerBase
         {
             var userCourseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<UserCourseModel>(payload.Data.ToString());
             return await _userCourseService.AddCourse(userCourseModel);
+        }
+        else if (SharedEnums.WebhookName.CourseList.ToString().Equals(payload.Name))
+        {
+            var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<int>>(payload.Data.ToString());
+            return await _courseService.GetCourseData(items.ToArray());
         }
         return new ResponseModel(false, "invalid request");
     }

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { AuthHelper } from "@/util/authHelper";
 import { getInitials } from "@/util/sharedHelper";
+import { AuthUserModel } from "@/util/types/authModel";
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   fixed?: boolean;
@@ -24,16 +25,17 @@ interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Header = ({ className, fixed, children, ...props }: HeaderProps) => {
-  const authUser = new AuthHelper().getAuthUser();
+  const [authUser, setAuthUser] = useState<AuthUserModel>();
+
   const [offset, setOffset] = React.useState(0);
 
   React.useEffect(() => {
     const onScroll = () => {
       setOffset(document.body.scrollTop || document.documentElement.scrollTop);
     };
-
+    const userAuthModel = new AuthHelper().getAuthUser();
+    setAuthUser(userAuthModel);
     document.addEventListener("scroll", onScroll, { passive: true });
-
     return () => document.removeEventListener("scroll", onScroll);
   }, []);
   <header

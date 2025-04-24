@@ -61,6 +61,6 @@ export class AuthHelper {
   }
   getAuthUser() {
     const userToken = this.getUserToken();
-    return userToken && userToken.token ? userToken : null;
+    return userToken && userToken.token ? userToken : new AuthUserModel();
   }
 }
