@@ -50,6 +50,7 @@ export interface IModuleModel {
   moduleId: number;
   title: string;
   description: string;
+  lessonCount: number;
   lessons: ILessonModel[];
 }
 

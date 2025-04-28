@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { NavigationRoute } from "@/util/navigation";
 
 const MyPurchase = () => {
   const orderService = new OrderService();
@@ -72,23 +74,25 @@ const MyPurchase = () => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {purchaseItem.data.map((item) => (
-                <Card
+                <Link
+                  href={NavigationRoute.PURCHASE_COURSE + item.courseId}
                   key={item.courseId}
-                  className="hover:shadow-lg transition-shadow"
                 >
-                  <CardHeader>
-                    <img
-                      src={item.thumbnailImageUrl}
-                      alt={item.courseName}
-                      className="w-full h-40 object-cover rounded-t-md"
-                    />
-                  </CardHeader>
-                  <CardContent>
-                    <CardTitle className="text-lg font-semibold">
-                      {item.courseName}
-                    </CardTitle>
-                  </CardContent>
-                </Card>
+                  <Card className="hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <img
+                        src={item.thumbnailImageUrl}
+                        alt={item.courseName}
+                        className="w-full h-40 object-cover rounded-t-md"
+                      />
+                    </CardHeader>
+                    <CardContent>
+                      <CardTitle className="text-lg font-semibold">
+                        {item.courseName}
+                      </CardTitle>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
             <div className="flex justify-between items-center mt-6">

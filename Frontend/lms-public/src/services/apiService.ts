@@ -68,6 +68,7 @@ export class APIService {
       options.body = JSON.stringify(data);
     }
     const responseData = await (await fetch(this.api + url, options)).json();
+    debugger;
     if (
       typeof window !== "undefined" &&
       responseData.message === "Unauthorized"

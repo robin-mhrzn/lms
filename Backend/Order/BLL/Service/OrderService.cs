@@ -3,6 +3,7 @@ using API.Order.BLL.IService;
 using API.Order.DAL.Context;
 using API.Order.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using SharedLib;
 using SharedLib.Helper;
@@ -183,6 +184,19 @@ namespace API.Order.BLL.Service
                 CurrentPage = model.CurrentPage,
             };
             return new ResponseModel(true, "Success", paginationResponse);
+        }
+        public async Task<ResponseModel> GetPurchaseCourseModule(int userId, int courseId, int moduleId)
+        {
+            var response = await CallWebhook(_apiHelperSetting.WebhookUrl, new WebHoookPayloadModel
+            {
+                Name = SharedEnums.WebhookName.PurchaseCourseModuleDetail.ToString(),
+                Data = new { CourseId = courseId, UserId = userId, ModuleId = moduleId }
+            });
+            if (response == null || !response.Success)
+            {
+                return response ?? new ResponseModel(false, "Failed to fetch course detail");
+            }
+            return response;
         }
     }
 }

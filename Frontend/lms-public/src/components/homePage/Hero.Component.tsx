@@ -28,7 +28,7 @@ const HeroComponent = () => {
                 placeholder="search courses..."
                 autoComplete="off"
               />
-              <button className="bg-secondary p-5 rounded-full absolute right-2 top-2">
+              <button className="bg-primary p-5 rounded-full absolute right-2 top-2">
                 <Search className="text-white text-4xl inline-block" />
               </button>
             </div>

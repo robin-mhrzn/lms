@@ -18,7 +18,9 @@
         {
             CourseCheck,
             PurchaseCourse,
-            CourseList
+            CourseList,
+            PurchaseCourseDetail,
+            PurchaseCourseModuleDetail
         }
     }
 }

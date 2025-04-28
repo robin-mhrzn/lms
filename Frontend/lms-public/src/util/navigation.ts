@@ -8,6 +8,7 @@ export enum NavigationRoute {
   DASHBOARD = "/admin",
   PROFILE = "/admin/profile",
   MY_PURCHASE = "/admin/my-purchase",
+  PURCHASE_COURSE = "/admin/course/",
 }
 
 export const generateCourseUrl = (

@@ -89,7 +89,7 @@ const NavUser = () => {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href="/settings/account">
+                <Link href={NavigationRoute.PROFILE}>
                   <BadgeCheck className="mr-2 h-4 w-4" />
                   Account
                 </Link>

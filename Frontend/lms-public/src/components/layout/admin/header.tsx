@@ -97,7 +97,7 @@ const Header = ({ className, fixed, children, ...props }: HeaderProps) => {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href="/">Profile</Link>
+                <Link href={NavigationRoute.PROFILE}>Profile</Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

@@ -13,4 +13,7 @@
         public string CourseName { get; set; } = string.Empty;
         public string ThumbnailUrl { get; set; } = string.Empty;
     }
+
+
+   
 }

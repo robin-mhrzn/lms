@@ -29,30 +29,43 @@ public class WebhookController : ControllerBase
     public async Task<ResponseModel> ReceiveWebhook([FromBody] WebHoookPayloadModel payload)
     {
         var signature = Request.Headers["X-API-KEY"].FirstOrDefault();
-        if (!IsValidSignature(signature))
+        if (string.IsNullOrEmpty(signature) || !IsValidSignature(signature))
         {
             return new ResponseModel(false, "Invalid signature");
         }
 
-        if (SharedEnums.WebhookName.CourseCheck.ToString().Equals(payload.Name))
+        if (Enum.TryParse<SharedEnums.WebhookName>(payload.Name, out var webhookName))
         {
+            switch (webhookName)
+            {
+                case SharedEnums.WebhookName.CourseCheck:
+                    var checkCourseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CheckCourseModel>(payload.Data.ToString());
+                    return await _userCourseService.CheckCoursePrice(checkCourseModel.UserId, checkCourseModel.CourseId);
 
-            var payloadData = Newtonsoft.Json.JsonConvert.DeserializeObject<CheckCourseModel>(payload.Data.ToString());
-            var data = await _courseService.CheckCoursePrice(payloadData.UserId, payloadData.CourseId);
-            return data;
+                case SharedEnums.WebhookName.PurchaseCourse:
+                    var userCourseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<UserCourseModel>(payload.Data.ToString());
+                    return await _userCourseService.AddCourse(userCourseModel);
+
+                case SharedEnums.WebhookName.CourseList:
+                    var courseIds = Newtonsoft.Json.JsonConvert.DeserializeObject<List<int>>(payload.Data.ToString());
+                    return await _courseService.GetCourseData(courseIds.ToArray());
+
+                case SharedEnums.WebhookName.PurchaseCourseDetail:
+                    var purchaseDetailModel = Newtonsoft.Json.JsonConvert.DeserializeObject<UserCourseModel>(payload.Data.ToString());
+                    return await _userCourseService.GetPurchaseCourseDetail(purchaseDetailModel.UserId, purchaseDetailModel.CourseId);
+
+                case SharedEnums.WebhookName.PurchaseCourseModuleDetail:
+                    var moduleDetailModel = Newtonsoft.Json.JsonConvert.DeserializeObject<WebhookCourseModuleDetailModel>(payload.Data.ToString());
+                    return await _userCourseService.GetPurchaseCourseModule(moduleDetailModel);
+
+                default:
+                    return new ResponseModel(false, "Invalid request");
+            }
         }
-        else if (SharedEnums.WebhookName.PurchaseCourse.ToString().Equals(payload.Name))
-        {
-            var userCourseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<UserCourseModel>(payload.Data.ToString());
-            return await _userCourseService.AddCourse(userCourseModel);
-        }
-        else if (SharedEnums.WebhookName.CourseList.ToString().Equals(payload.Name))
-        {
-            var items = Newtonsoft.Json.JsonConvert.DeserializeObject<List<int>>(payload.Data.ToString());
-            return await _courseService.GetCourseData(items.ToArray());
-        }
-        return new ResponseModel(false, "invalid request");
+        return new ResponseModel(false, "Invalid request");
     }
+
+
     private bool IsValidSignature(string signature)
     {
         if (signature == _webhookSetting.SIGNATURE)

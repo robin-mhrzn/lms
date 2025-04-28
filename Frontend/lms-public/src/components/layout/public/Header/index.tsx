@@ -11,6 +11,7 @@ import Logo from "./Logo";
 import { LogIn, UserPlus } from "lucide-react";
 import { NavigationRoute } from "@/util/navigation";
 import { useAuth } from "@/context/auth/Auth.Context";
+import { Button } from "@/components/ui/button";
 
 const Header: React.FC = () => {
   const pathUrl = usePathname();
@@ -74,17 +75,17 @@ const Header: React.FC = () => {
                 Welcome, <strong>{authUser?.name}</strong>
               </span>
               <Link
-                href="/profile"
+                href={NavigationRoute.PROFILE}
                 className="flex items-center gap-2 bg-primary/15 hover:bg-primary text-primary hover:text-white px-4 py-2 rounded-full text-sm font-medium"
               >
                 Profile
               </Link>
-              <button
+              <Button
                 onClick={handleLogout}
                 className="flex items-center gap-2 bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded-full text-sm font-medium"
               >
                 Logout
-              </button>
+              </Button>
             </div>
           ) : (
             <>
@@ -146,7 +147,7 @@ const Header: React.FC = () => {
           {isAuthenticated ? (
             <div className="mt-4 flex flex-col space-y-4 w-full">
               <Link
-                href="/profile"
+                href={NavigationRoute.PROFILE}
                 className="flex items-center justify-between w-full py-2 text-muted focus:outline-none"
                 onClick={() => setNavbarOpen(false)}
               >

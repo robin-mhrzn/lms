@@ -504,19 +504,7 @@ namespace API.Course.BLL.Service
             return new ResponseModel(true, "Record deleted successfully");
         }
 
-        public async Task<ResponseModel> CheckCoursePrice(int userId, int courseId)
-        {
-            var course = await (from c in _context.Courses.Where(a => a.CourseId == courseId && a.IsPublished == true)
-                                join uc in _context.UserCourses on c.CourseId equals uc.CourseId into userCoursesGroup
-                                from uc in userCoursesGroup.DefaultIfEmpty()
-                                select new
-                                {
-                                    CourseId = c.CourseId,
-                                    Price = c.Price,
-                                    IsAlreadyPurchase = uc != null
-                                }).FirstOrDefaultAsync();
-            return new ResponseModel(true, "Success", course);
-        }
+       
 
         public async Task<ResponseModel> GetCourseData(int[] courseId)
         {
@@ -529,6 +517,9 @@ namespace API.Course.BLL.Service
                                 }).ToListAsync();
             return new ResponseModel(true, "success", course);
         }
+      
+      
+
     }
 
 }

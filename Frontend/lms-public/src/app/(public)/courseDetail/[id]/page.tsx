@@ -6,7 +6,11 @@ import { CourseService } from "@/services/courseService/courseService";
 import { getImageUrl } from "@/util/sharedHelper";
 import { CheckCircle } from "lucide-react";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const courseService = new CourseService();
   const course = await courseService.getCourseDetail(parseInt(id));

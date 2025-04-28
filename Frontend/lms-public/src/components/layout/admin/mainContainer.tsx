@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 interface MainProps extends React.HTMLAttributes<HTMLElement> {
   fixed?: boolean;
@@ -23,6 +24,7 @@ const MainContainer = ({ fixed, content, title, ...props }: MainProps) => {
           <p className="text-muted-foreground">{content}</p>
         </div>
       </div>
+      <Separator className="my-4 lg:my-6" />
       {props.children}
     </main>
   );

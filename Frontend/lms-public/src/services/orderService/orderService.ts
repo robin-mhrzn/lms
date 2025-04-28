@@ -1,10 +1,27 @@
 import { PaginationModel } from "@/util/types/paginationModel";
 import { APIService } from "../apiService";
+import { showMessage } from "@/util/sharedHelper";
 export interface IPurchaseCourseItem {
   courseId: number;
   courseName: string;
   thumbnailImageUrl: string;
 }
+export interface ICourseModuleItem {
+  moduleId: number;
+  title: string;
+  description: string;
+  lesson: ICourseModuleLessonItem[];
+}
+export interface ICourseModuleLessonItem {
+  lessonId: number;
+  title: string;
+  description: string;
+  videoUrl: string;
+  duration: number;
+  position: number;
+  isCompleted: boolean;
+}
+
 export class OrderService {
   apiService = new APIService();
   addOrder = async (
@@ -67,6 +84,33 @@ export class OrderService {
             pageSize: 10,
             totalRecord: 0,
           } as PaginationModel<IPurchaseCourseItem>;
+        }
+      });
+  };
+  purchasedCourseModuleLessons = async (
+    courseId: number,
+    moduleId: number
+  ): Promise<ICourseModuleItem> => {
+    return await this.apiService
+      .callApi({
+        url:
+          "order/PurchaseCourseModule/?courseId=" +
+          courseId +
+          "&moduleId=" +
+          moduleId,
+        method: "GET",
+      })
+      .then((response) => {
+        if (response.success) {
+          return response.data as ICourseModuleItem;
+        } else {
+          showMessage(false, response.message);
+          return {
+            moduleId: 0,
+            title: "",
+            description: "",
+            lesson: [],
+          } as ICourseModuleItem;
         }
       });
   };
