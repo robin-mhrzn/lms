@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +12,11 @@ import { Elements } from "@stripe/react-stripe-js";
 import { OrderService } from "@/services/orderService/orderService";
 import CheckoutComponent from "../checkOut/checkout.Component";
 import { loadStripe } from "@stripe/stripe-js";
+import { AuthHelper } from "@/util/authHelper";
+import { AuthUserModel } from "@/util/types/authModel";
+import { showMessage } from "@/util/sharedHelper";
+import { useRouter } from "next/navigation";
+import { NavigationRoute } from "@/util/navigation";
 
 interface PurchaseComponentProps {
   courseId: number;
@@ -25,20 +29,38 @@ const stripePromise = loadStripe(
 const PurchaseComponent: React.FC<PurchaseComponentProps> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPurchase, setIsPurchase] = useState(false);
+  const [authUser, setAuthUser] = useState<AuthUserModel>(new AuthUserModel());
   const orderService = new OrderService();
+  const authHelper = new AuthHelper();
+  const router = useRouter();
   useEffect(() => {
-    orderService.isCoursePurchased(props.courseId).then((res) => {
-      setIsPurchase(res);
-    });
+    const userModel = authHelper.getAuthUser();
+    if (userModel && userModel.email) {
+      setAuthUser(userModel);
+      orderService.isCoursePurchased(props.courseId).then((res) => {
+        setIsPurchase(res);
+      });
+    }
   }, [props.courseId]);
   const handleOnSetPurchase = (isPurchased: boolean) => {
     setIsPurchase(isPurchased);
     setIsOpen(false);
   };
+  const handlePurchase = () => {
+    if (authUser && authUser.email) {
+      setIsOpen(true);
+    } else {
+      showMessage(false, "Please login to purchase this course");
+      const redirectUrl = encodeURIComponent(window.location.href);
+      setTimeout(() => {
+        router.push(`${NavigationRoute.LOGIN}?redirect=${redirectUrl}`);
+      }, 2000);
+    }
+  };
   return (
     <>
       {!isPurchase ? (
-        <Button className="w-full mb-4" onClick={() => setIsOpen(true)}>
+        <Button className="w-full mb-4" onClick={handlePurchase}>
           Purchase this course
         </Button>
       ) : (

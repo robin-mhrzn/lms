@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { PaginationModel } from "@/util/types/paginationModel";
 import Link from "next/link";
+import { getImageUrl } from "@/util/sharedHelper";
 
 interface RequestCourseListProps {
   categoryId?: number;
@@ -254,7 +255,7 @@ const SearchListComponent: React.FC<SearchListProps> = ({
                 >
                   <div className="relative">
                     <img
-                      src={course.thumbnailImageUrl}
+                      src={getImageUrl(course.thumbnailImageUrl)}
                       alt={course.title}
                       className="w-full h-40 object-cover"
                     />

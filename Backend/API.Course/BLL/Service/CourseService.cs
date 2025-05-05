@@ -201,12 +201,12 @@ namespace API.Course.BLL.Service
             {
                 return new ResponseModel(false, "Course not available. Please check it again");
             }
-            courseEntity.IsPublished = model.IsPublished;
+            courseEntity.IsPublished = model.IsPublish;
             courseEntity.ModifiedBy = userId;
             courseEntity.ModifiedDate = DateTime.UtcNow;
             _context.Courses.Update(courseEntity);
             await _context.SaveChangesAsync();
-            return new ResponseModel(true, model.IsPublished ? "Course published successfully" : "Course unpublished successfully");
+            return new ResponseModel(true, model.IsPublish ? "Course published successfully" : "Course unpublished successfully");
         }
 
         public async Task<ResponseModel> SetPricing(int userId, CoursePricingModel model)
@@ -513,7 +513,7 @@ namespace API.Course.BLL.Service
                                 {
                                     CourseId = c.CourseId,
                                     CourseName = c.Title,
-                                    ThumbnailImageUrl=c.ThumbnailImageUrl,
+                                    ThumbnailUrl = c.ThumbnailImageUrl,
                                 }).ToListAsync();
             return new ResponseModel(true, "success", course);
         }

@@ -56,7 +56,7 @@ export default async function Page({
           categoryId: parsedCategoryId,
           subCategoryId: parsedSubCategoryId,
           price: price ? price.split("-").map(Number) : [0, 1000],
-          query,
+          query: query === "_" ? "" : query,
           sortBy,
           pageNo: parsedPageNo,
           pageSize: parsedPageSize,

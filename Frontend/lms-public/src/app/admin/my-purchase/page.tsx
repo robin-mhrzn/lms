@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { NavigationRoute } from "@/util/navigation";
+import { getImageUrl } from "@/util/sharedHelper";
 
 const MyPurchase = () => {
   const orderService = new OrderService();
@@ -58,6 +59,10 @@ const MyPurchase = () => {
     }
   };
 
+  const totalPages = purchaseItem
+    ? Math.ceil(purchaseItem.totalRecord / requestPaginationItem.pageSize)
+    : 0;
+
   return (
     <MainContainer
       title="My Purchase"
@@ -81,7 +86,7 @@ const MyPurchase = () => {
                   <Card className="hover:shadow-lg transition-shadow">
                     <CardHeader>
                       <img
-                        src={item.thumbnailImageUrl}
+                        src={getImageUrl(item.thumbnailUrl)}
                         alt={item.courseName}
                         className="w-full h-40 object-cover rounded-t-md"
                       />
@@ -95,33 +100,29 @@ const MyPurchase = () => {
                 </Link>
               ))}
             </div>
-            <div className="flex justify-between items-center mt-6">
-              <Button
-                onClick={handlePreviousPage}
-                disabled={requestPaginationItem.currentPage === 1}
-                variant="outline"
-              >
-                Previous
-              </Button>
-              <p className="text-gray-500">
-                Page {requestPaginationItem.currentPage} of{" "}
-                {Math.ceil(
-                  purchaseItem.totalRecord / requestPaginationItem.pageSize
-                )}
-              </p>
-              <Button
-                onClick={handleNextPage}
-                disabled={
-                  requestPaginationItem.currentPage >=
-                  Math.ceil(
-                    purchaseItem.totalRecord / requestPaginationItem.pageSize
-                  )
-                }
-                variant="outline"
-              >
-                Next
-              </Button>
-            </div>
+
+            {/* Show pagination only if there is more than one page */}
+            {totalPages > 1 && (
+              <div className="flex justify-between items-center mt-6">
+                <Button
+                  onClick={handlePreviousPage}
+                  disabled={requestPaginationItem.currentPage === 1}
+                  variant="outline"
+                >
+                  Previous
+                </Button>
+                <p className="text-gray-500">
+                  Page {requestPaginationItem.currentPage} of {totalPages}
+                </p>
+                <Button
+                  onClick={handleNextPage}
+                  disabled={requestPaginationItem.currentPage >= totalPages}
+                  variant="outline"
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </>
         ) : (
           <div className="text-center py-10">

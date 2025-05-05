@@ -9,8 +9,12 @@ import { FaEnvelope, FaLock } from "react-icons/fa";
 import * as yup from "yup";
 interface ISignInProps {
   handleResetPassword: () => void;
+  onLoginSuccess: () => void;
 }
-const SignInComponent: React.FC<ISignInProps> = ({ handleResetPassword }) => {
+const SignInComponent: React.FC<ISignInProps> = ({
+  handleResetPassword,
+  onLoginSuccess,
+}) => {
   const schema = yup.object().shape({
     email: yup
       .string()
@@ -37,9 +41,7 @@ const SignInComponent: React.FC<ISignInProps> = ({ handleResetPassword }) => {
       data: data,
       callback: (res: AuthUserModel) => {
         authHelper.setUserAuth(res);
-        setTimeout(function () {
-          location.href = NavigationRoute.HOME;
-        }, 2000);
+        onLoginSuccess();
       },
     });
   };

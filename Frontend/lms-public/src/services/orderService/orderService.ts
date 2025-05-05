@@ -4,7 +4,7 @@ import { showMessage } from "@/util/sharedHelper";
 export interface IPurchaseCourseItem {
   courseId: number;
   courseName: string;
-  thumbnailImageUrl: string;
+  thumbnailUrl: string;
 }
 export interface ICourseModuleItem {
   moduleId: number;

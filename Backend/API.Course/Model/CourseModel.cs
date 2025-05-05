@@ -34,7 +34,7 @@ namespace API.Course.Model
     public class CoursePublishModel
     {
         public int CourseId { get; set; }
-        public bool IsPublished { get; set; }
+        public bool IsPublish { get; set; }
     }
 
     public class CourseTagsModel

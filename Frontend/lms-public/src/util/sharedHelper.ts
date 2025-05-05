@@ -1,36 +1,40 @@
 import moment from "moment";
-import { toast } from "react-toastify";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-const reactSwal = withReactContent(Swal);
+import { toast } from "sonner";
+
 export const showMessage = (success: boolean, msg: string) => {
-  if (success) {
-    toast.success(msg);
-  } else {
-    toast.error(msg);
-  }
+  toast(msg, {
+    style: {
+      backgroundColor: success ? "#D1FAE5" : "#FEE2E2", // Green for success, red for error
+      color: success ? "#065F46" : "#B91C1C", // Dark green for success, dark red for error
+      border: "1px solid",
+      borderColor: success ? "#10B981" : "#EF4444", // Border color matches the type
+      borderRadius: "8px",
+      padding: "16px",
+    },
+    icon: success ? "✅" : "❌", // Success and error icons
+  });
 };
 
 export const showConfirm = (message: string, callback: () => void) => {
-  reactSwal
-    .fire({
-      title: "Confirm?",
-      text: message,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-      reverseButtons: false,
-      customClass: {
-        confirmButton: "btn btn-primary",
-        cancelButton: "btn btn-danger",
-      },
-    })
-    .then((result) => {
-      if (result.isConfirmed) {
-        callback();
-      }
-    });
+  // reactSwal
+  //   .fire({
+  //     title: "Confirm?",
+  //     text: message,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonText: "Yes",
+  //     cancelButtonText: "No",
+  //     reverseButtons: false,
+  //     customClass: {
+  //       confirmButton: "btn btn-primary",
+  //       cancelButton: "btn btn-danger",
+  //     },
+  //   })
+  //   .then((result) => {
+  //     if (result.isConfirmed) {
+  //       callback();
+  //     }
+  //   });
 };
 
 export const getCurrentYear = () => {

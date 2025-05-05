@@ -67,6 +67,14 @@ const AdminLayout = () => {
       ),
     },
     {
+      key: "3",
+      label: (
+        <Link to={PATHS.CHANGEPASSWORD} className="menu-item">
+          <UserOutlined /> Change Password
+        </Link>
+      ),
+    },
+    {
       key: "2",
       label: (
         <Link

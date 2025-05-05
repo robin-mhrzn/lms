@@ -2,6 +2,7 @@ export const PATHS = {
   LANDINGPAGE: "/",
   DASHBOARD: "/admin",
   CATEGORY: "/admin/category",
+  CHANGEPASSWORD: "/admin/change-password",
   COURSELIST: "/admin/course/list",
   COURSEDETAIL: "/admin/course/detail",
   SETTINGS: "/settings",
